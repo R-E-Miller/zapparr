@@ -6,6 +6,7 @@
     <color name="text_tertiary">#FF6B7380</color>
     <!-- Zap yellow: focus rings, the focused button, the logo. -->
     <color name="accent">#FFFFC53D</color>
+    <color name="error">#FFFF7A6B</color>
     <color name="on_accent">#FF141414</color>
     <color name="icon_background">#FF14181F</color>
 </resources>

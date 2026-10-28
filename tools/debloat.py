@@ -289,6 +289,8 @@ def cmd_set_home(box: Box, state: State, assume_yes: bool, wifi_checked: bool, s
         return 1
     if not box.launches(ZAPPARR_HOME, settle):
         raise Refused("Zapparr didn't start, so nothing was changed.")
+    # Close that test launch, or it lingers as a second Zapparr beside the one Home starts.
+    box.sh(f"am force-stop {ZAPPARR}")
     recorded_home = False
     if home_before and not home_before.startswith(ZAPPARR + "/") and not state.home_before:
         state.home_before = home_before

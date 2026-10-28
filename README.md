@@ -4,8 +4,9 @@ The set-top "launcharr" for Android TV: a lean home screen that works like a cab
 live TV guide from [Dispatcharr](https://github.com/Dispatcharr/Dispatcharr), and your movies and
 series sit side by side, with no ads and nothing deciding what you want to watch.
 
-> **Status: early development (Phase 1).** The home screen, the app rows and the debloat tool work.
-> The Guide and Library decks are placeholders until Phase 2.
+> **Status: early development (Phase 2 under way).** The home screen, the app rows and the debloat
+> tool work. Zapparr connects to Dispatcharr and loads its channels and guide; the guide grid and
+> the Library come next.
 
 ## What it is
 
@@ -15,8 +16,8 @@ Three decks, side by side. Left and Right on the remote move between them at the
 |---|---|---|
 | Your favorite apps in a row, then every app on the box | Dispatcharr channels in a cable-style time grid *(Phase 2)* | Movies and series from Dispatcharr's VOD or your own catalog *(Phase 2)* |
 
-- **Built for budget boxes.** Plain Android views, no background services, no network permission
-  yet. Made on and for the 2 GB onn 4K box.
+- **Built for budget boxes.** Plain Android views, no background services, and no network use
+  beyond your own Dispatcharr server. Made on and for the 2 GB onn 4K box.
 - **Favorites you arrange.** Hold OK on any app to add it, move it or open its App info.
 - **Home always comes back.** Pressing Home returns to your first favorite; Back from the Guide or
   Library returns to Apps; the gear opens the TV's Settings.
@@ -46,6 +47,8 @@ on Windows, `winget install Google.PlatformTools`) and Python 3 for the debloat 
    python tools/debloat.py --host 192.168.1.50 set-home
    ```
    `python tools/debloat.py --host 192.168.1.50 restore` puts everything back.
+5. **Connect Dispatcharr.** Press Right to the Guide, choose *Connect to Dispatcharr*, and enter the
+   server's address (like `192.168.1.20:9191`), a Dispatcharr user name and that user's XC password.
 
 Don't uninstall Zapparr while it is Home and the stock launcher is disabled: run `restore` first.
 
@@ -58,6 +61,10 @@ JDK 17 or newer and the Android SDK (Android Studio brings both).
 ./gradlew testDebugUnitTest lintDebug
 python -m unittest discover -s tools
 ```
+
+No Dispatcharr to test against? `python tools/fake_dispatcharr.py` serves 60 made-up channels and a
+guide around the current time. In the Android emulator, connect to `10.0.2.2` with user and password
+`zapparr`.
 
 Every build, local or CI, is signed with the same public development key in [keystore/](keystore/README.md),
 so a newer APK always installs over an older one.

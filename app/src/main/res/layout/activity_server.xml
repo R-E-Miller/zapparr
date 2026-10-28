@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dispatcharr address and XC login. Scrolls so the on-screen keyboard never hides a field. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="@dimen/form_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/safe_vertical"
+        android:paddingBottom="@dimen/safe_vertical">
+
+        <TextView
+            style="@style/Zapparr.PlaceholderTitle"
+            android:text="@string/server_title" />
+
+        <TextView
+            style="@style/Zapparr.PlaceholderBody"
+            android:gravity="start"
+            android:text="@string/server_help" />
+
+        <TextView
+            style="@style/Zapparr.FieldLabel"
+            android:labelFor="@id/address"
+            android:text="@string/server_address" />
+
+        <EditText
+            android:id="@+id/address"
+            style="@style/Zapparr.Field"
+            android:autofillHints="url"
+            android:imeOptions="actionNext"
+            android:inputType="textUri" />
+
+        <TextView
+            style="@style/Zapparr.FieldLabel"
+            android:labelFor="@id/username"
+            android:text="@string/server_username" />
+
+        <EditText
+            android:id="@+id/username"
+            style="@style/Zapparr.Field"
+            android:autofillHints="username"
+            android:imeOptions="actionNext"
+            android:inputType="text" />
+
+        <TextView
+            style="@style/Zapparr.FieldLabel"
+            android:labelFor="@id/password"
+            android:text="@string/server_password" />
+
+        <EditText
+            android:id="@+id/password"
+            style="@style/Zapparr.Field"
+            android:autofillHints="password"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword" />
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:minLines="2"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/body_text" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/connect"
+                style="@style/Zapparr.Action"
+                android:layout_marginTop="8dp"
+                android:text="@string/server_connect" />
+
+            <Button
+                android:id="@+id/forget"
+                style="@style/Zapparr.Action"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/server_forget"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

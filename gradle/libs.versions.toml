@@ -3,7 +3,9 @@ agp = "9.4.1"
 activity = "1.13.0"
 coreKtx = "1.19.1"
 coroutines = "1.11.0"
+json = "20260814"
 junit = "4.13.2"
+kxml2 = "2.3.0"
 leanbackGrid = "1.0.0"
 lifecycle = "2.11.0"
 recyclerview = "1.4.0"
@@ -15,6 +17,9 @@ androidx-leanback-grid = { group = "androidx.leanback", name = "leanback-grid", 
 androidx-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime", version.ref = "lifecycle" }
 androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+# org.json and an XmlPullParser for unit tests: Android has both built in, the JVM has neither.
+json = { group = "org.json", name = "json", version.ref = "json" }
+kxml2 = { group = "net.sf.kxml", name = "kxml2", version.ref = "kxml2" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 
 [plugins]

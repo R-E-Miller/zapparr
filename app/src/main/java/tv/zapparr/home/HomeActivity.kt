@@ -23,6 +23,14 @@ import tv.zapparr.apps.AppsDeck
 import tv.zapparr.apps.FavoritesStore
 import tv.zapparr.apps.openApp
 import tv.zapparr.apps.openSettings
+import tv.zapparr.live.Lineup
+import tv.zapparr.live.Problem
+import tv.zapparr.live.Server
+import tv.zapparr.live.ServerActivity
+import tv.zapparr.live.ServerStore
+import tv.zapparr.live.XcClient
+import tv.zapparr.live.XcException
+import tv.zapparr.live.describe
 
 /** The home screen: a clock bar over three decks, Apps, Guide and Library. */
 class HomeActivity : ComponentActivity() {
@@ -33,6 +41,16 @@ class HomeActivity : ComponentActivity() {
     private lateinit var repository: AppRepository
     private var loadJob: Job? = null
     private var firstLoad = true
+
+    private lateinit var servers: ServerStore
+    private lateinit var guideBody: TextView
+    private lateinit var guideAction: Button
+    private var lineupJob: Job? = null
+    // The server the Guide shows, and its channels once loaded. A failed load is retried on the next resume.
+    private var lineupShown = false
+    private var lineupServer: Server? = null
+    private var lineup: Lineup? = null
+    private var lineupFailed = false
 
     // Installs, updates, removals, and apps enabled or disabled (by the debloat tool too).
     private val packageChanges = object : BroadcastReceiver() {
@@ -52,6 +70,11 @@ class HomeActivity : ComponentActivity() {
 
         findViewById<View>(R.id.settings).setOnClickListener { openSettings() }
 
+        servers = ServerStore(this)
+        guideBody = findViewById(R.id.guide_body)
+        guideAction = findViewById(R.id.guide_action)
+        guideAction.setOnClickListener { startActivity(Intent(this, ServerActivity::class.java)) }
+
         // Home never closes: Back from the Guide or Library returns to Apps.
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -67,6 +90,11 @@ class HomeActivity : ComponentActivity() {
         }
         ContextCompat.registerReceiver(this, packageChanges, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
         loadApps()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadLineup()
     }
 
     override fun onDestroy() {
@@ -88,7 +116,7 @@ class HomeActivity : ComponentActivity() {
         loadJob = lifecycleScope.launch {
             val apps = withContext(Dispatchers.IO) { repository.load() }
             appsDeck.submit(apps)
-            bindPlaceholderActions(apps)
+            bindLibraryAction(apps)
             if (firstLoad) {
                 firstLoad = false
                 appsDeck.focusFirst()
@@ -96,17 +124,53 @@ class HomeActivity : ComponentActivity() {
         }
     }
 
-    // Until the Guide and Library arrive in Phase 2, both decks open TiviMate if it's installed.
-    private fun bindPlaceholderActions(apps: List<AppEntry>) {
+    // Until the Library arrives, its deck opens TiviMate if it's installed.
+    private fun bindLibraryAction(apps: List<AppEntry>) {
         val tivimate = apps.firstOrNull { it.packageName == TIVIMATE }
-        for (id in intArrayOf(R.id.guide_action, R.id.library_action)) {
-            val button = findViewById<Button>(id)
-            if (tivimate != null) {
-                button.text = getString(R.string.open_app, tivimate.label)
-                button.setOnClickListener { openApp(tivimate) }
+        val button = findViewById<Button>(R.id.library_action)
+        if (tivimate != null) {
+            button.text = getString(R.string.open_app, tivimate.label)
+            button.setOnClickListener { openApp(tivimate) }
+        } else {
+            button.setText(R.string.coming_soon)
+            button.setOnClickListener(null)
+        }
+    }
+
+    // Loads channels and the guide when the saved server changes (or the last try failed).
+    private fun loadLineup() {
+        val server = servers.load()
+        if (lineupShown && server == lineupServer && !lineupFailed) return
+        lineupJob?.cancel()
+        lineupShown = true
+        lineupServer = server
+        lineup = null
+        lineupFailed = false
+        if (server == null) {
+            guideBody.setText(R.string.guide_not_set_up)
+            guideAction.setText(R.string.guide_connect)
+            return
+        }
+        guideBody.text = getString(R.string.guide_loading, server.address)
+        guideAction.setText(R.string.guide_server)
+        lineupJob = lifecycleScope.launch {
+            val now = System.currentTimeMillis()
+            val result = withContext(Dispatchers.IO) {
+                try {
+                    XcClient(server).lineup(now - GUIDE_PAST, now + GUIDE_AHEAD)
+                } catch (e: XcException) {
+                    e.problem
+                } catch (e: Exception) { // IOException while reading a reply
+                    Problem.UNREACHABLE
+                }
+            }
+            if (result is Lineup) {
+                lineup = result
+                val guided = result.channels.count { it.epgId in result.programs }
+                guideBody.text = resources.getQuantityString(R.plurals.guide_loaded, result.channels.size, result.channels.size, guided)
             } else {
-                button.setText(R.string.coming_soon)
-                button.setOnClickListener(null)
+                lineupFailed = true
+                guideBody.text = describe(result as Problem, server.address)
             }
         }
     }
@@ -117,5 +181,7 @@ class HomeActivity : ComponentActivity() {
 
     private companion object {
         const val TIVIMATE = "ar.tvplayer.tv"
+        const val GUIDE_PAST = 60 * 60 * 1000L
+        const val GUIDE_AHEAD = 12 * 60 * 60 * 1000L
     }
 }

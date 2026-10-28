@@ -67,6 +67,10 @@ class FakeBox:
                 return "Starting: Intent { cmp=tv.zapparr/.home.HomeActivity }\nError: Activity not started\n"
             self.on_screen = component
             return f"Status: ok\nLaunchState: COLD\nActivity: {component}\nComplete\n"
+        if words[:2] == ["am", "force-stop"]:
+            if self.on_screen.startswith(words[-1] + "/"):
+                self.on_screen = ""
+            return ""
         if command == "input keyevent KEYCODE_HOME":
             self.on_screen = self.answers_home()
             return ""
