@@ -59,10 +59,12 @@ Install Zapparr first (`adb install -r app-release.apk`). Then, **before** `set-
 python tools/debloat.py --host 192.168.1.50 set-home
 ```
 
-It makes Zapparr the Home activity, presses Home and checks that Zapparr came up, and only then
-disables the setup wizard and the stock launcher, together. On Google TV the wizard re-enables the
-launcher and its recovery screen takes over Home once the launcher is gone, so one can't go without
-the other. If Zapparr doesn't come up, nothing is disabled and Home goes back to the stock launcher.
+It starts Zapparr to check that it runs (if it doesn't, nothing changes), makes it the Home activity,
+disables the setup wizard and the stock launcher together, then presses Home. Google TV's launcher
+keeps answering Home for as long as it is enabled, even after the Home setting changes, so this is
+the first moment the switch can be checked: if Home doesn't land on Zapparr, everything is
+re-enabled and Home handed back on the spot. The wizard goes with the launcher because on Google TV
+it re-enables the launcher, and its recovery screen takes over Home once the launcher is gone.
 
 ## Undo
 

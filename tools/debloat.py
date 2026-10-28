@@ -138,13 +138,23 @@ class Box:
             raise Refused(f"{component!r} is not an activity name")
         self.sh(f"cmd package set-home-activity {component}")
 
+    def on_screen(self) -> str:
+        """The activity in front, from the activity manager's dump."""
+        match = re.search(r"ResumedActivity[:=]\s*ActivityRecord\{\S+ \S+ ([\w.]+/[\w.$]+)",
+                          self.sh("dumpsys activity activities"))
+        return match.group(1) if match else ""
+
+    def launches(self, component: str, settle: float) -> bool:
+        """Starts an activity directly and checks that it is the one on screen."""
+        started = "Status: ok" in self.sh(f"am start -W -n {component}")
+        time.sleep(settle)
+        return started and self.on_screen().startswith(component.split("/")[0] + "/")
+
     def shows_after_home(self, settle: float) -> str:
         """Presses Home and returns the activity that comes up."""
         self.sh("input keyevent KEYCODE_HOME")
         time.sleep(settle)
-        match = re.search(r"ResumedActivity[:=]\s*ActivityRecord\{\S+ \S+ ([\w.]+/[\w.$]+)",
-                          self.sh("dumpsys activity activities"))
-        return match.group(1) if match else ""
+        return self.on_screen()
 
     def wifi_owned_by_setup(self) -> int | None:
         """How many saved Wi-Fi networks the setup wizard created, or None if the firmware won't say.
@@ -273,26 +283,35 @@ def cmd_set_home(box: Box, state: State, assume_yes: bool, wifi_checked: bool, s
 
     home_before = box.home()
     print(f"Home now: {home_before or 'unknown'}")
-    print(f"Will make Zapparr Home, check it comes up, then disable: {', '.join(targets) or 'nothing'}")
+    print(f"Will check Zapparr starts, make it Home, disable {', '.join(targets) or 'nothing'}, "
+          "then press Home, undoing it all if Home doesn't land on Zapparr.")
     if not confirm("Go ahead?", assume_yes):
         return 1
+    if not box.launches(ZAPPARR_HOME, settle):
+        raise Refused("Zapparr didn't start, so nothing was changed.")
+    recorded_home = False
     if home_before and not home_before.startswith(ZAPPARR + "/") and not state.home_before:
         state.home_before = home_before
         state.save()
+        recorded_home = True
 
     box.set_home(ZAPPARR_HOME)
-    if not box.shows_after_home(settle).startswith(ZAPPARR + "/"):
-        if COMPONENT.match(home_before) and "ResolverActivity" not in home_before:
-            box.set_home(home_before)
-        raise Refused("Zapparr didn't come up when Home was pressed, so nothing was disabled "
-                      "and Home was handed back.")
-
+    # Google TV's launcher keeps answering Home while it is enabled, whatever the preferred Home is,
+    # so the real check can only come after it is disabled.
     failed = disable_all(box, state, targets)
     if box.shows_after_home(settle).startswith(ZAPPARR + "/"):
         print("Zapparr is Home. `restore` gives Home back to the stock launcher.")
         return 1 if failed else 0
-    print("Warning: Home didn't land on Zapparr afterwards. Run `restore` to put things back.")
-    return 1
+
+    for pkg in reversed(targets):
+        if pkg not in failed and box.enable(pkg):
+            state.forget(pkg)
+    if COMPONENT.match(home_before) and "ResolverActivity" not in home_before:
+        box.set_home(home_before)
+    if recorded_home:
+        state.home_before = None
+        state.save()
+    raise Refused("Home didn't land on Zapparr, so everything was re-enabled and Home handed back.")
 
 
 def cmd_restore(box: Box, state: State, assume_yes: bool) -> int:
