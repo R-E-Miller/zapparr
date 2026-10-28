@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated: a bolt and "ZAPPARR" in a 5x7 pixel font. TV banners are 320x180 (16:9). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+    <path android:pathData="M0,0h320v180h-320z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="320"
+                android:endY="180"
+                android:startX="0"
+                android:startY="0"
+                android:type="linear">
+                <item android:color="#FF1A2029" android:offset="0" />
+                <item android:color="#FF0B0E13" android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:fillColor="#FFFFC53D"
+        android:pathData="M51.1,64L25.1,95.2L45.9,95.2L43.3,116L71.9,82.2L51.1,82.2Z" />
+    <path
+        android:fillColor="#FFF3F5F8"
+        android:pathData="M89.9,72.5h25v5h-25zM109.9,77.5h5v5h-5zM104.9,82.5h5v5h-5zM99.9,87.5h5v5h-5zM94.9,92.5h5v5h-5zM89.9,97.5h5v5h-5zM89.9,102.5h25v5h-25zM124.9,72.5h15v5h-15zM119.9,77.5h5v5h-5zM139.9,77.5h5v5h-5zM119.9,82.5h5v5h-5zM139.9,82.5h5v5h-5zM119.9,87.5h25v5h-25zM119.9,92.5h5v5h-5zM139.9,92.5h5v5h-5zM119.9,97.5h5v5h-5zM139.9,97.5h5v5h-5zM119.9,102.5h5v5h-5zM139.9,102.5h5v5h-5zM149.9,72.5h20v5h-20zM149.9,77.5h5v5h-5zM169.9,77.5h5v5h-5zM149.9,82.5h5v5h-5zM169.9,82.5h5v5h-5zM149.9,87.5h20v5h-20zM149.9,92.5h5v5h-5zM149.9,97.5h5v5h-5zM149.9,102.5h5v5h-5zM179.9,72.5h20v5h-20zM179.9,77.5h5v5h-5zM199.9,77.5h5v5h-5zM179.9,82.5h5v5h-5zM199.9,82.5h5v5h-5zM179.9,87.5h20v5h-20zM179.9,92.5h5v5h-5zM179.9,97.5h5v5h-5zM179.9,102.5h5v5h-5zM214.9,72.5h15v5h-15zM209.9,77.5h5v5h-5zM229.9,77.5h5v5h-5zM209.9,82.5h5v5h-5zM229.9,82.5h5v5h-5zM209.9,87.5h25v5h-25zM209.9,92.5h5v5h-5zM229.9,92.5h5v5h-5zM209.9,97.5h5v5h-5zM229.9,97.5h5v5h-5zM209.9,102.5h5v5h-5zM229.9,102.5h5v5h-5zM239.9,72.5h20v5h-20zM239.9,77.5h5v5h-5zM259.9,77.5h5v5h-5zM239.9,82.5h5v5h-5zM259.9,82.5h5v5h-5zM239.9,87.5h20v5h-20zM239.9,92.5h5v5h-5zM249.9,92.5h5v5h-5zM239.9,97.5h5v5h-5zM254.9,97.5h5v5h-5zM239.9,102.5h5v5h-5zM259.9,102.5h5v5h-5zM269.9,72.5h20v5h-20zM269.9,77.5h5v5h-5zM289.9,77.5h5v5h-5zM269.9,82.5h5v5h-5zM289.9,82.5h5v5h-5zM269.9,87.5h20v5h-20zM269.9,92.5h5v5h-5zM279.9,92.5h5v5h-5zM269.9,97.5h5v5h-5zM284.9,97.5h5v5h-5zM269.9,102.5h5v5h-5zM289.9,102.5h5v5h-5z" />
+</vector>

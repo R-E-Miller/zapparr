@@ -1,0 +1,21 @@
+<resources>
+    <!-- Inside the TV's overscan-safe area. Six tiles (6 x 128 + 5 x 16 = 848dp) fill the 960dp
+         screen between these margins. -->
+    <dimen name="safe_horizontal">56dp</dimen>
+    <dimen name="safe_vertical">27dp</dimen>
+    <dimen name="deck_top">32dp</dimen>
+
+    <dimen name="tile_width">128dp</dimen>
+    <dimen name="tile_height">72dp</dimen>
+    <dimen name="tile_spacing">16dp</dimen>
+    <dimen name="tile_lift">8dp</dimen>
+    <dimen name="tile_icon">36dp</dimen>
+    <dimen name="tile_icon_top">10dp</dimen>
+    <dimen name="row_spacing">28dp</dimen>
+    <dimen name="corner">8dp</dimen>
+
+    <dimen name="tile_name_text">12sp</dimen>
+    <dimen name="tile_caption_text">14sp</dimen>
+    <dimen name="row_title_text">18sp</dimen>
+    <dimen name="body_text">18sp</dimen>
+</resources>

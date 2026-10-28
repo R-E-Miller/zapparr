@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The whole tile takes focus; the card mirrors that state for its focus ring. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/tile_width"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/tile_card"
+        android:layout_width="@dimen/tile_width"
+        android:layout_height="@dimen/tile_height"
+        android:background="@drawable/tile_background"
+        android:duplicateParentState="true"
+        android:foreground="@drawable/tile_focus">
+
+        <ImageView
+            android:id="@+id/tile_banner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/tile_icon"
+            android:layout_width="@dimen/tile_icon"
+            android:layout_height="@dimen/tile_icon"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/tile_icon_top"
+            android:importantForAccessibility="no" />
+
+        <TextView
+            android:id="@+id/tile_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="6dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/tile_name_text" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tile_caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:alpha="0"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/tile_caption_text" />
+</LinearLayout>
