@@ -1,0 +1,21 @@
+[versions]
+agp = "9.4.1"
+activity = "1.13.0"
+coreKtx = "1.19.1"
+coroutines = "1.11.0"
+junit = "4.13.2"
+leanbackGrid = "1.0.0"
+lifecycle = "2.11.0"
+recyclerview = "1.4.0"
+
+[libraries]
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-leanback-grid = { group = "androidx.leanback", name = "leanback-grid", version.ref = "leanbackGrid" }
+androidx-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime", version.ref = "lifecycle" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }

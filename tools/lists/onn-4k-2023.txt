@@ -1,0 +1,36 @@
+# onn 4K Streaming Box (2023, Walmart; Google TV, Amlogic, 2 GB RAM)
+#
+# Adapted from the tested CleanYourTV list for this box (MIT licence):
+# https://github.com/Gathin23/cleanyourtv/tree/main/examples/onn-4k-streaming-box-2023
+#
+# One package per line; everything after # is a comment. Packages that aren't installed are
+# skipped, and nothing is uninstalled: `python tools/debloat.py restore` re-enables all of it.
+#
+# Not on this list on purpose:
+#   - The stock launcher (com.google.android.apps.tv.launcherx) and the setup wizard
+#     (com.google.android.tungsten.setupwraith). `debloat.py set-home` disables them together, once
+#     Zapparr is Home and no saved Wi-Fi network belongs to the wizard. See docs/debloat.md.
+#   - Anything debloat.py refuses whatever a list says: Play Services and Play Store, TV Settings,
+#     keyboards, com.gretzky.GlobalKey (the remote's app buttons and mic), com.droidlogic.* (HDMI,
+#     picture, remote pairing), the remote and Bluetooth services.
+#
+# Kept by default, but yours to decide. Remove the leading "# " to disable one:
+# com.google.android.katniss                    # Google Assistant and voice search
+# com.google.android.apps.mediashell            # Chromecast built-in (casting from your phone)
+# com.google.android.apps.tv.dreamx             # Google's ambient-mode screensaver
+
+# Telemetry and feedback
+com.google.android.feedback
+com.android.tv.feedbackconsent
+
+# Privacy Sandbox ad measurement and on-device ad personalisation. On the same build, Play Store
+# and voice search kept working with these off.
+com.android.adservices.api
+com.android.ondevicepersonalization.services
+com.android.federatedcompute.services
+
+# Preloaded apps
+com.google.android.play.games
+com.google.android.videos                       # Google TV / Play Movies
+com.android.printspooler
+com.google.android.marvin.talkback              # screen reader: delete this line if you use it

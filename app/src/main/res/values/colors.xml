@@ -1,0 +1,11 @@
+<resources>
+    <color name="background">#FF0B0E13</color>
+    <color name="surface">#FF1A1F27</color>
+    <color name="text_primary">#FFF3F5F8</color>
+    <color name="text_secondary">#FFA3ACB9</color>
+    <color name="text_tertiary">#FF6B7380</color>
+    <!-- Zap yellow: focus rings, the focused button, the logo. -->
+    <color name="accent">#FFFFC53D</color>
+    <color name="on_accent">#FF141414</color>
+    <color name="icon_background">#FF14181F</color>
+</resources>
