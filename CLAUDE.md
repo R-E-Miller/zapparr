@@ -10,7 +10,11 @@ plan, the verified Dispatcharr and TvProvider facts, and the open questions.
   Left/Right at row edges), `Decks`.
 - `app/src/main/java/tv/zapparr/apps/`: app discovery (`AppRepository`), the Favorites rules and
   store, the Apps deck rows and tiles, launch helpers.
+- `app/src/main/java/tv/zapparr/live/`: Dispatcharr over the Xtream Codes API. `Server` (address
+  and login), `Xc` (URLs and JSON replies), `Xmltv` (streaming guide reader), `XcClient` (HTTP),
+  `ServerActivity` (the connect screen).
 - `tools/debloat.py`: probe, plan, apply, set-home, restore over adb. `tools/lists/`: per-box lists.
+- `tools/fake_dispatcharr.py`: a stand-in XC server for the emulator (`10.0.2.2`, `zapparr`/`zapparr`).
 - `keystore/`: the public development signing key used by every build.
 
 ## Commands

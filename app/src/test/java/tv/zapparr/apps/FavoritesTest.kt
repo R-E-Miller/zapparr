@@ -41,7 +41,7 @@ class FavoritesTest {
     }
 
     @Test
-    fun moveSwapsWithANeighbourAndStopsAtTheEnds() {
+    fun moveSwapsWithANeighborAndStopsAtTheEnds() {
         val row = listOf("a", "b", "c")
 
         assertEquals(listOf("b", "a", "c"), Favorites.move(row, "b", -1))

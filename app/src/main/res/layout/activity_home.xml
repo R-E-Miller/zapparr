@@ -106,8 +106,9 @@
                 android:text="@string/guide_title" />
 
             <TextView
+                android:id="@+id/guide_body"
                 style="@style/Zapparr.PlaceholderBody"
-                android:text="@string/guide_body" />
+                android:text="@string/guide_not_set_up" />
 
             <Button
                 android:id="@+id/guide_action"

@@ -11,7 +11,14 @@
     <string name="all_apps">All apps</string>
 
     <string name="guide_title">Live TV</string>
-    <string name="guide_body">The channel guide from your Dispatcharr server arrives in Phase 2.</string>
+    <string name="guide_not_set_up">Connect Zapparr to your Dispatcharr server to see live TV here.</string>
+    <string name="guide_loading">Loading channels from %1$s…</string>
+    <plurals name="guide_loaded">
+        <item quantity="one">Connected: %1$d channel, %2$d with guide data. The guide grid comes next.</item>
+        <item quantity="other">Connected: %1$d channels, %2$d with guide data. The guide grid comes next.</item>
+    </plurals>
+    <string name="guide_connect">Connect to Dispatcharr</string>
+    <string name="guide_server">Server settings</string>
     <string name="library_title">Movies and series</string>
     <string name="library_body">Your VOD library arrives in Phase 2.</string>
     <string name="open_app">Open %1$s</string>
@@ -23,4 +30,19 @@
     <string name="menu_move_left">Move left</string>
     <string name="menu_move_right">Move right</string>
     <string name="menu_app_info">App info</string>
+
+    <string name="server_title">Dispatcharr server</string>
+    <string name="server_help">Enter your server\'s address and an XC login: a Dispatcharr user name and the XC password set for that user in Dispatcharr.</string>
+    <string name="server_address">Address, like 192.168.1.20:9191</string>
+    <string name="server_username">User name</string>
+    <string name="server_password">XC password</string>
+    <string name="server_connect">Connect</string>
+    <string name="server_forget">Forget server</string>
+    <string name="server_connecting">Connecting to %1$s…</string>
+    <string name="server_bad_address">That doesn\'t look like an address. Try something like 192.168.1.20:9191.</string>
+    <string name="server_no_username">Enter the user name.</string>
+    <string name="problem_unreachable">Couldn\'t reach %1$s. Check the address and that the server is on.</string>
+    <string name="problem_not_xc">%1$s answered, but not like Dispatcharr. Check the address and port.</string>
+    <string name="problem_wrong_login">The server didn\'t accept that user name and XC password.</string>
+    <string name="problem_account_inactive">The server says this account is not active.</string>
 </resources>

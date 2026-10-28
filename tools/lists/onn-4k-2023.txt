@@ -1,6 +1,6 @@
 # onn 4K Streaming Box (2023, Walmart; Google TV, Amlogic, 2 GB RAM)
 #
-# Adapted from the tested CleanYourTV list for this box (MIT licence):
+# Adapted from the tested CleanYourTV list for this box (MIT license):
 # https://github.com/Gathin23/cleanyourtv/tree/main/examples/onn-4k-streaming-box-2023
 #
 # One package per line; everything after # is a comment. Packages that aren't installed are
@@ -23,7 +23,7 @@
 com.google.android.feedback
 com.android.tv.feedbackconsent
 
-# Privacy Sandbox ad measurement and on-device ad personalisation. On the same build, Play Store
+# Privacy Sandbox ad measurement and on-device ad personalization. On the same build, Play Store
 # and voice search kept working with these off.
 com.android.adservices.api
 com.android.ondevicepersonalization.services

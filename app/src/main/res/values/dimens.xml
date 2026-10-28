@@ -13,6 +13,7 @@
     <dimen name="tile_icon_top">10dp</dimen>
     <dimen name="row_spacing">28dp</dimen>
     <dimen name="corner">8dp</dimen>
+    <dimen name="form_width">520dp</dimen>
 
     <dimen name="tile_name_text">12sp</dimen>
     <dimen name="tile_caption_text">14sp</dimen>

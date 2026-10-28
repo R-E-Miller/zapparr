@@ -41,7 +41,7 @@ they slide to the next deck. They never jump diagonally into another row.
 3. **Library** *(Phase 2)*: poster grid of movies and series with Recently added, genres, details and
    resume.
 
-Home on Home returns to the first favourite. Back from Guide or Library returns to Apps. A gear in
+Home on Home returns to the first favorite. Back from Guide or Library returns to Apps. A gear in
 the clock bar opens the TV's Settings, the only way into Settings once the stock launcher is off.
 
 ## Phases
@@ -50,9 +50,15 @@ the clock bar opens the TV's Settings, the only way into Settings once the stock
    `androidx.leanback:leanback-grid`), HOME and LEANBACK_LAUNCHER intents, the deck pager, app
    discovery that follows installs and enable/disable, the Favorites row, and `tools/debloat.py` with
    the onn list.
-2. **Dispatcharr and VOD**: Xtream Codes client for live, EPG, movies and series; M3U and XMLTV as a
-   fallback; the guide grid; the Library grid; Continue Watching from Watch Next; external player
-   handoff; a settings screen for the server address and login.
+2. **Dispatcharr and VOD**, in four steps:
+   1. *Connection (built)*: the server screen (address and XC login, saved only once the server
+      accepts it), the Xtream Codes client, and channels plus a 13-hour guide window (1 hour back,
+      12 ahead) loaded when Home opens with a new server.
+   2. *Guide*: the time grid, now line, group filters, and OK to watch through the player handoff.
+   3. *Library*: movies and series, details, play and resume.
+   4. *Continue Watching* from Watch Next and an *On now* row on the Apps deck.
+
+   M3U and XMLTV output stay a fallback for servers without the XC API.
 3. **Built-in player**: Media3 (ExoPlayer) with hardware decoding; mini-guide OSD (OK or Down for
    now/next, arrows to browse channels without leaving the stream); channel numbers from remotes
    with digits and an on-screen pad for the onn remote, which has none; last-channel recall; live TV
@@ -62,10 +68,14 @@ the clock bar opens the TV's Settings, the only way into Settings once the stock
 
 - **Views, not Compose.** A launcher stays resident, and this box has 2 GB. Plain views with
   `leanback-grid` keep memory and cold start low and give TV-grade D-pad focus in rows. The EPG grid
-  will be one custom-drawn view, not a view per programme.
+  will be one custom-drawn view, not a view per program.
 - **Signing.** Every build uses the public development key in `keystore/`, so updates install over
   each other. A launcher can't be uninstalled safely while it is Home.
-- **No network permission yet.** Phase 2 adds `INTERNET` along with the Dispatcharr client.
+- **Network.** `INTERNET`, and cleartext allowed, since Dispatcharr on a home network is usually
+  plain `http://<ip>:9191`. Zapparr talks to no server but the one the user enters.
+- **Few dependencies.** HTTP is `HttpURLConnection`, JSON is the platform's `org.json`, and XMLTV is
+  read with the platform's pull parser, streaming and keeping only the lineup's channels inside the
+  guide window. Unit tests add `org.json` and `kxml2` for the JVM.
 
 ## Dispatcharr: what the server actually exposes
 
@@ -79,6 +89,17 @@ Checked against Dispatcharr's source (`dispatcharr/urls.py`, `apps/output/urls.p
 | Xtream Codes API | `/player_api.php?username=&password=&action=` | actions: `get_live_categories`, `get_live_streams`, `get_short_epg`, `get_simple_data_table`, `get_vod_categories`, `get_vod_streams`, `get_vod_info`, `get_series_categories`, `get_series`, `get_series_info`. Also `/get.php`, `/xmltv.php` |
 | Streams | `/live/<user>/<pass>/<channel_id>`, `/movie/<user>/<pass>/<id>.<ext>`, `/series/<user>/<pass>/<id>.<ext>`, `/timeshift/...` | VOD is proxied through Dispatcharr |
 | REST API | `/api/`, docs at `/api/swagger/` | |
+
+What the XC replies hold, from `apps/output/views.py` and `apps/output/epg.py`:
+
+- A bare `player_api.php` call returns `user_info` with `auth: 1` and `status: "Active"`.
+- `get_live_streams`: `num` is always a whole number (fractional channel numbers are bumped to the
+  next free one), `epg_channel_id` is that number as a string, `stream_icon` may be null.
+- `xmltv.php`: `<channel id>` and `<programme channel>` are the same whole channel number, so they
+  match `epg_channel_id`. Times are `YYYYmmddHHMMSS +0000`, titles plain text. Channels with no
+  guide data get generated placeholder programs.
+- `get_short_epg` (per channel, base64 titles) exists but means one request per channel; the guide
+  uses `xmltv.php` instead.
 
 M3U and EPG output obey Dispatcharr's network-access settings. Users get XC credentials ("XC
 password") in Dispatcharr.
@@ -153,11 +174,10 @@ From the tested CleanYourTV list for this box; `tools/debloat.py` enforces them.
 
 ## Open questions
 
-1. Which onn box is it, exactly? `python tools/debloat.py --host <ip> probe` prints the model,
-   Android version and stock launcher.
-2. Is the IPTV provider an Xtream Codes account in Dispatcharr? If so, Dispatcharr's VOD may replace
-   the `.strm` scraper.
-3. The local news apps' package names, for the default Favorites row
-   (`adb shell pm list packages | findstr -i news`).
-4. Does TiviMate accept a stream URL? Run the test command above.
-5. Do Prime Video and Paramount+ publish Watch Next rows on this box?
+1. The onn 4K (1st gen, not the Pro): the `probe` output will confirm the Android version and stock
+   launcher (`python tools/debloat.py --host <ip> probe`).
+2. *Answered*: Dispatcharr has the XC API on, so Live TV and VOD come from its XC endpoints and the
+   `.strm` scraper is only a fallback. Local news apps are added from the Apps deck (hold OK), not
+   as defaults.
+3. Does TiviMate accept a stream URL? Run the test command above.
+4. Do Prime Video and Paramount+ publish Watch Next rows on this box?
