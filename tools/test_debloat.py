@@ -14,16 +14,34 @@ GAMES = "com.google.android.play.games"
 
 
 class FakeBox:
-    """Answers the shell commands debloat.py sends, roughly as an onn 4K box does."""
+    """Answers the shell commands debloat.py sends, roughly as an onn 4K box does.
 
-    def __init__(self, installed, wifi_creators=("com.android.tv.settings",), zapparr_starts=True):
+    Like the Google TV 14 emulator, the stock launcher answers Home while it is enabled, whatever
+    the preferred Home activity is. [other_home] is any other activity that grabs Home when enabled.
+    """
+
+    def __init__(self, installed, wifi_creators=("com.android.tv.settings",), zapparr_starts=True,
+                 other_home=None):
         self.installed = set(installed)
         self.disabled = set()
         self.home = LAUNCHER_HOME
         self.on_screen = ""
         self.wifi_creators = list(wifi_creators)
         self.zapparr_starts = zapparr_starts
+        self.other_home = other_home
+        if other_home:
+            self.installed.add(other_home.split("/")[0])
         self.log = []
+
+    def enabled(self, pkg):
+        return pkg in self.installed and pkg not in self.disabled
+
+    def answers_home(self):
+        for component in (LAUNCHER_HOME, self.other_home):
+            if component and self.enabled(component.split("/")[0]):
+                return component
+        pkg = self.home.split("/")[0]
+        return self.home if self.enabled(pkg) and (pkg != d.ZAPPARR or self.zapparr_starts) else ""
 
     def shell(self, command):
         self.log.append(command)
@@ -39,14 +57,18 @@ class FakeBox:
             self.disabled.discard(words[-1])
             return f"Package {words[-1]} new state: enabled\n"
         if command.startswith("cmd package resolve-activity"):
-            return f"priority=0 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=true\n{self.home}\n"
+            return f"priority=0 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=true\n{self.answers_home()}\n"
         if command.startswith("cmd package set-home-activity"):
             self.home = words[-1]
             return "Success\n"
+        if words[:3] == ["am", "start", "-W"]:
+            component = words[-1]
+            if component.split("/")[0] == d.ZAPPARR and not self.zapparr_starts:
+                return "Starting: Intent { cmp=tv.zapparr/.home.HomeActivity }\nError: Activity not started\n"
+            self.on_screen = component
+            return f"Status: ok\nLaunchState: COLD\nActivity: {component}\nComplete\n"
         if command == "input keyevent KEYCODE_HOME":
-            pkg = self.home.split("/")[0]
-            starts = pkg not in self.disabled and (pkg != d.ZAPPARR or self.zapparr_starts)
-            self.on_screen = self.home if starts else ""
+            self.on_screen = self.answers_home()
             return ""
         if command == "dumpsys activity activities":
             return f"  topResumedActivity=ActivityRecord{{5d2e1a u0 {self.on_screen} t7}}\n" if self.on_screen else ""
@@ -122,17 +144,33 @@ class DebloatTest(unittest.TestCase):
         self.assertEqual({LAUNCHER, d.SETUP_WIZARD}, box.disabled)
         disables = [c.split()[-1] for c in box.log if c.startswith("pm disable-user")]
         self.assertEqual([d.SETUP_WIZARD, LAUNCHER], disables)
+        first_launch = next(i for i, c in enumerate(box.log) if c.startswith("am start -W"))
+        first_disable = next(i for i, c in enumerate(box.log) if c.startswith("pm disable-user"))
+        self.assertLess(first_launch, first_disable, "Zapparr must be seen running before anything is disabled")
 
         self.assertEqual(0, d.cmd_restore(d.Box(box.shell), d.State(self.state.path), assume_yes=True))
         self.assertEqual(set(), box.disabled)
         self.assertEqual(LAUNCHER_HOME, box.home)
 
-    def test_set_home_hands_home_back_when_zapparr_does_not_come_up(self):
+    def test_set_home_changes_nothing_when_zapparr_will_not_start(self):
         box = FakeBox([LAUNCHER, d.ZAPPARR], zapparr_starts=False)
         with self.assertRaises(d.Refused):
             d.cmd_set_home(d.Box(box.shell), self.state, True, False, settle=0)
         self.assertEqual(LAUNCHER_HOME, box.home)
         self.assertEqual(set(), box.disabled)
+        self.assertFalse(any(c.startswith("cmd package set-home-activity") for c in box.log))
+
+    def test_set_home_undoes_everything_when_home_lands_somewhere_else(self):
+        other = "com.example.vendorhome/.Home"
+        box = FakeBox([LAUNCHER, d.SETUP_WIZARD, d.ZAPPARR], other_home=other)
+
+        with self.assertRaises(d.Refused):
+            d.cmd_set_home(d.Box(box.shell), self.state, True, False, settle=0)
+        self.assertEqual(set(), box.disabled)
+        self.assertEqual(LAUNCHER_HOME, box.answers_home())
+        reloaded = d.State(self.state.path)
+        self.assertEqual([], reloaded.disabled)
+        self.assertIsNone(reloaded.home_before)
 
     def test_set_home_needs_zapparr_installed(self):
         box = FakeBox([LAUNCHER])

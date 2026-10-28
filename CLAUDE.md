@@ -29,7 +29,8 @@ push.
   stays resident on a 2 GB box. Keep dependencies few and the APK small.
 - Keep logic that can be tested without Android (like `Favorites`, `Decks`) free of Android types,
   and unit-test it.
-- Debloat safety rules live in `tools/debloat.py` (`PROTECTED`, `set-home`): never disable the stock
-  launcher before Zapparr comes up as Home; disable the setup wizard only together with it and only
-  when no saved Wi-Fi network belongs to it; record every change before making it.
+- Debloat safety rules live in `tools/debloat.py` (`PROTECTED`, `set-home`): check Zapparr starts
+  before disabling the stock launcher, and undo at once if Home doesn't land on Zapparr afterwards
+  (Google TV keeps Home while its launcher is enabled); disable the setup wizard only together with
+  the launcher and only when no saved Wi-Fi network belongs to it; record every change before making it.
 - Package names in lists are validated before they reach `adb shell`.

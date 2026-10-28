@@ -125,7 +125,10 @@ From the tested CleanYourTV list for this box; `tools/debloat.py` enforces them.
   setup, and disabling it deletes them. Forget and re-join each saved network (out-of-range ones too)
   first. Its recovery screen takes Home once the launcher is gone, and it re-enables the launcher, so
   it is disabled together with the stock launcher, by `set-home`.
-- **Stock launcher**: disabled only after Zapparr is Home and has come up on a Home press.
+- **Stock launcher**: Google TV's launcher keeps Home while it is enabled, even after
+  `cmd package set-home-activity` reports success (seen on the Google TV 14 emulator). So `set-home`
+  first checks that Zapparr starts, then disables the launcher, presses Home, and undoes everything
+  at once if Home doesn't land on Zapparr.
 - **Never touched**: `com.gretzky.GlobalKey` (the onn remote's app buttons and mic),
   `com.droidlogic.*` (HDMI, picture, remote pairing), Play Services and Play Store, TV Settings,
   keyboards, the remote and Bluetooth services, TvProvider.
@@ -142,6 +145,11 @@ From the tested CleanYourTV list for this box; `tools/debloat.py` enforces them.
 | Leanback project | `androidx.leanback`'s full UI library isn't needed | Plain views plus `leanback-grid` for rows |
 | minSdk 26 | Kept. The SDK needs compileSdk 37 for current AndroidX; targetSdk stays 36 | |
 | Stock launcher is `launcherx` | Only on Google TV; the 2021 onn Android TV box uses `tvlauncher` | `debloat.py` handles both |
+
+## Known issues
+
+- **Down doesn't keep the column.** Moving Down from a Favorites tile lands on the first tile of All
+  apps, because each leanback row remembers its own position. A cable-box feel would keep the column.
 
 ## Open questions
 
