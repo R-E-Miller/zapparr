@@ -23,7 +23,7 @@ On this box, network ADB (port 5555) opens as soon as USB debugging is on; no pa
 - macOS: `brew install android-platform-tools python`.
 - Debian or Ubuntu: `sudo apt install adb python3`.
 
-The first command shows "Allow USB debugging?" on the TV. Tick "Always allow from this computer".
+The first command shows "Allow USB debugging?" on the TV. Check "Always allow from this computer".
 
 ## 3. Look before changing anything
 

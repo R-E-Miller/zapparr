@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
  * Holds the decks side by side and shows one at a time.
  *
  * Left and Right move focus inside the current deck while there is something on the same line
- * to move to. At the edge of a deck they slide to the neighbouring deck instead, so focus never
+ * to move to. At the edge of a deck they slide to the neighboring deck instead, so focus never
  * jumps diagonally into another row.
  */
 class DeckPager @JvmOverloads constructor(
@@ -61,7 +61,7 @@ class DeckPager @JvmOverloads constructor(
         }
         // At the edge: a fresh press changes deck, while a held key stops here rather than overshooting.
         if (event.repeatCount == 0) {
-            Decks.neighbour(current, childCount, direction == FOCUS_RIGHT, isRtl)?.let { show(it, takeFocus = true) }
+            Decks.neighbor(current, childCount, direction == FOCUS_RIGHT, isRtl)?.let { show(it, takeFocus = true) }
         }
         return true
     }

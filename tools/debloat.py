@@ -368,7 +368,7 @@ def connect(adb: str, host: str | None, serial: str | None) -> tuple[Box, str | 
     asked = False
     while (status := run(base + ["get-state"]).strip()) != "device":
         if "unauthorized" in status and not asked:
-            print('Accept "Allow USB debugging?" on the TV (tick "Always allow from this computer").')
+            print('Accept "Allow USB debugging?" on the TV (check "Always allow from this computer").')
             asked = True
         if time.monotonic() > deadline:
             raise Refused(f"the box didn't become ready: {status or 'no answer'}")

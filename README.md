@@ -13,12 +13,12 @@ Three decks, side by side. Left and Right on the remote move between them at the
 
 | Apps | Guide | Library |
 |---|---|---|
-| Your favourite apps in a row, then every app on the box | Dispatcharr channels in a cable-style time grid *(Phase 2)* | Movies and series from Dispatcharr's VOD or your own catalog *(Phase 2)* |
+| Your favorite apps in a row, then every app on the box | Dispatcharr channels in a cable-style time grid *(Phase 2)* | Movies and series from Dispatcharr's VOD or your own catalog *(Phase 2)* |
 
 - **Built for budget boxes.** Plain Android views, no background services, no network permission
   yet. Made on and for the 2 GB onn 4K box.
 - **Favorites you arrange.** Hold OK on any app to add it, move it or open its App info.
-- **Home always comes back.** Pressing Home returns to your first favourite; Back from the Guide or
+- **Home always comes back.** Pressing Home returns to your first favorite; Back from the Guide or
   Library returns to Apps; the gear opens the TV's Settings.
 - **A reversible debloat tool** for the onn 4K: switches off telemetry, ad services and preloads
   with `pm disable-user`, records every change first, and undoes it all with one command.
@@ -74,7 +74,7 @@ so a newer APK always installs over an older one.
 
 Details, verified API notes and open questions: [docs/SPEC.md](docs/SPEC.md).
 
-## Credits and licence
+## Credits and license
 
 Zapparr is licensed under the [GNU GPL v3](LICENSE).
 

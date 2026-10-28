@@ -76,7 +76,7 @@ class HomeActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        // Pressing Home always lands on the first favourite, like a cable box's Menu key.
+        // Pressing Home always lands on the first favorite, like a cable box's Menu key.
         if (intent.hasCategory(Intent.CATEGORY_HOME)) {
             decks.show(Decks.APPS, takeFocus = false)
             appsDeck.focusFirst()

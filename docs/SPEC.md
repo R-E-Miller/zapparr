@@ -41,7 +41,7 @@ they slide to the next deck. They never jump diagonally into another row.
 3. **Library** *(Phase 2)*: poster grid of movies and series with Recently added, genres, details and
    resume.
 
-Home on Home returns to the first favourite. Back from Guide or Library returns to Apps. A gear in
+Home on Home returns to the first favorite. Back from Guide or Library returns to Apps. A gear in
 the clock bar opens the TV's Settings, the only way into Settings once the stock launcher is off.
 
 ## Phases
@@ -62,7 +62,7 @@ the clock bar opens the TV's Settings, the only way into Settings once the stock
 
 - **Views, not Compose.** A launcher stays resident, and this box has 2 GB. Plain views with
   `leanback-grid` keep memory and cold start low and give TV-grade D-pad focus in rows. The EPG grid
-  will be one custom-drawn view, not a view per programme.
+  will be one custom-drawn view, not a view per program.
 - **Signing.** Every build uses the public development key in `keystore/`, so updates install over
   each other. A launcher can't be uninstalled safely while it is Home.
 - **No network permission yet.** Phase 2 adds `INTERNET` along with the Dispatcharr client.

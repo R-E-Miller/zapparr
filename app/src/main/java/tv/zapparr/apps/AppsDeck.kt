@@ -24,7 +24,7 @@ class AppsDeck(private val rows: VerticalGridView, private val store: FavoritesS
         rebuild()
     }
 
-    /** Focuses the first favourite, or the first app when there are none, as Home does. */
+    /** Focuses the first favorite, or the first app when there are none, as Home does. */
     fun focusFirst() {
         val row = if (favorites.isEmpty()) FIRST_APPS_ROW else FAVORITES_ROW
         if (row >= adapter.itemCount) return
