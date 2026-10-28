@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The whole tile takes focus; the card mirrors that state for its focus ring. -->
+<!-- The whole tile takes focus; the card mirrors that state for its focus ring. Focusable in touch
+     mode too: a mouse click (or a TV with a touchscreen) mustn't leave the remote with nothing to move. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/tile_width"
     android:layout_height="wrap_content"
     android:clipChildren="false"
     android:clipToPadding="false"
     android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical">
 
     <FrameLayout

@@ -45,6 +45,10 @@ class DeckPager @JvmOverloads constructor(
         if (changed) for (i in 0 until childCount) getChildAt(i).translationX = offsetOf(i)
     }
 
+    // When focus has to be rebuilt (leaving touch mode, a row reloading under the focused tile), it
+    // goes to the deck on screen rather than the window's first focusable, the Settings button.
+    override fun restoreDefaultFocus(): Boolean = getChildAt(current)?.requestFocus() ?: false
+
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         val direction = when (event.keyCode) {
             KeyEvent.KEYCODE_DPAD_LEFT -> FOCUS_LEFT
