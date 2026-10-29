@@ -9,4 +9,6 @@
     <color name="error">#FFFF7A6B</color>
     <color name="on_accent">#FF141414</color>
     <color name="icon_background">#FF14181F</color>
+    <!-- Guide cells for programs on now, and the focused channel. -->
+    <color name="guide_airing">#FF262D39</color>
 </resources>

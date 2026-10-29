@@ -47,7 +47,7 @@ class DeckPager @JvmOverloads constructor(
 
     // When focus has to be rebuilt (leaving touch mode, a row reloading under the focused tile), it
     // goes to the deck on screen rather than the window's first focusable, the Settings button.
-    override fun restoreDefaultFocus(): Boolean = getChildAt(current)?.requestFocus() ?: false
+    override fun restoreDefaultFocus(): Boolean = getChildAt(current)?.restoreDefaultFocus() ?: false
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         val direction = when (event.keyCode) {
@@ -66,7 +66,10 @@ class DeckPager @JvmOverloads constructor(
         return true
     }
 
-    /** Slides [index] into view; with [takeFocus], focus moves into it (grids restore their selection). */
+    /**
+     * Slides [index] into view; with [takeFocus], focus moves into it: to its focusedByDefault view
+     * if it has one, and grids restore their selection.
+     */
     fun show(index: Int, takeFocus: Boolean) {
         if (index !in 0 until childCount) return
         val changed = index != current
@@ -74,7 +77,7 @@ class DeckPager @JvmOverloads constructor(
         val incoming = getChildAt(index)
         incoming.visibility = VISIBLE
         setFocusable(incoming, true)
-        if (takeFocus) incoming.requestFocus()
+        if (takeFocus) incoming.restoreDefaultFocus()
         for (i in 0 until childCount) {
             val deck = getChildAt(i)
             if (i != current) setFocusable(deck, false)
@@ -96,6 +99,7 @@ class DeckPager @JvmOverloads constructor(
     }
 
     private fun canMoveWithinDeck(focused: View, direction: Int): Boolean {
+        if (focused is Sideways) return focused.canMove(right = direction == FOCUS_RIGHT)
         // A scrolling row knows about tiles that aren't laid out yet, so ask it by position.
         val row = focused.parent as? RecyclerView
         if (row != null && row.layoutManager?.canScrollHorizontally() == true) {
@@ -117,6 +121,12 @@ class DeckPager @JvmOverloads constructor(
     private fun boundsOf(view: View) = Rect().also {
         view.getDrawingRect(it)
         offsetDescendantRectToMyCoords(view, it)
+    }
+
+    /** A view that moves through its own content with Left and Right, like the Guide's time grid. */
+    interface Sideways {
+        /** Whether Left or Right still has somewhere to go inside the view. */
+        fun canMove(right: Boolean): Boolean
     }
 
     private companion object {

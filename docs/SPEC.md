@@ -54,7 +54,12 @@ the clock bar opens the TV's Settings, the only way into Settings once the stock
    1. *Connection (built)*: the server screen (address and XC login, saved only once the server
       accepts it), the Xtream Codes client, and channels plus a 13-hour guide window (1 hour back,
       12 ahead) loaded when Home opens with a new server.
-   2. *Guide*: the time grid, now line, group filters, and OK to watch through the player handoff.
+   2. *Guide (built)*: one custom-drawn grid, two hours wide, starting at the current half hour:
+      channel number, logo and name down the side, a now line, the focused program's details above.
+      Up and Down keep to the same time (never before now); Left and Right step through programs and
+      change deck past either end; CH+ and CH- page. Filters: Favorites (hold OK on a channel), All
+      channels, and the server's groups. OK hands the channel to a video player. The guide reloads
+      once it is an hour old.
    3. *Library*: movies and series, details, play and resume.
    4. *Continue Watching* from Watch Next and an *On now* row on the Apps deck.
 
@@ -168,6 +173,9 @@ From the tested CleanYourTV list for this box; `tools/debloat.py` enforces them.
 | Stock launcher is `launcherx` | Only on Google TV; the 2021 onn Android TV box uses `tvlauncher` | `debloat.py` handles both |
 
 ## Known issues
+
+- **The Library is a long way Right from the Guide.** Right in the grid moves through 12 hours of
+  programs; the quick way is Up to the filters, then Right past Server settings.
 
 - **Down doesn't keep the column.** Moving Down from a Favorites tile lands on the first tile of All
   apps, because each leanback row remembers its own position. A cable-box feel would keep the column.

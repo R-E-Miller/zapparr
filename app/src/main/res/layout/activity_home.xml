@@ -97,23 +97,101 @@
                 app:focusOutFront="true" />
         </FrameLayout>
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/deck_guide"
-            style="@style/Zapparr.Placeholder">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-            <TextView
-                style="@style/Zapparr.PlaceholderTitle"
-                android:text="@string/guide_title" />
+            <!-- Until channels load: a message, and a button to the server screen. -->
+            <LinearLayout
+                android:id="@+id/guide_message"
+                style="@style/Zapparr.Placeholder">
 
-            <TextView
-                android:id="@+id/guide_body"
-                style="@style/Zapparr.PlaceholderBody"
-                android:text="@string/guide_not_set_up" />
+                <TextView
+                    style="@style/Zapparr.PlaceholderTitle"
+                    android:text="@string/guide_title" />
 
-            <Button
-                android:id="@+id/guide_action"
-                style="@style/Zapparr.Action" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/guide_body"
+                    style="@style/Zapparr.PlaceholderBody"
+                    android:text="@string/guide_not_set_up" />
+
+                <Button
+                    android:id="@+id/guide_action"
+                    style="@style/Zapparr.Action" />
+            </LinearLayout>
+
+            <!-- Once they have: the focused program's details, the filters, and the grid, which
+                 takes focus when the deck opens. -->
+            <LinearLayout
+                android:id="@+id/guide_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/safe_horizontal"
+                android:paddingTop="@dimen/guide_top"
+                android:paddingEnd="@dimen/safe_horizontal"
+                android:paddingBottom="@dimen/safe_vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/guide_program_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:textColor="@color/text_primary"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/guide_program_details"
+                    style="@style/Zapparr.GuideDetail"
+                    android:singleLine="true"
+                    android:textColor="@color/text_secondary" />
+
+                <TextView
+                    android:id="@+id/guide_program_description"
+                    style="@style/Zapparr.GuideDetail"
+                    android:ellipsize="end"
+                    android:lines="2"
+                    android:textColor="@color/text_tertiary" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
+
+                    <HorizontalScrollView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:id="@+id/guide_filters"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal" />
+                    </HorizontalScrollView>
+
+                    <TextView
+                        android:id="@+id/guide_settings"
+                        style="@style/Zapparr.Chip"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="0dp"
+                        android:text="@string/guide_server" />
+                </LinearLayout>
+
+                <tv.zapparr.live.GuideView
+                    android:id="@+id/guide_grid"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:focusedByDefault="true" />
+            </LinearLayout>
+        </FrameLayout>
 
         <LinearLayout
             android:id="@+id/deck_library"

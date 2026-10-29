@@ -13,10 +13,19 @@
     <string name="guide_title">Live TV</string>
     <string name="guide_not_set_up">Connect Zapparr to your Dispatcharr server to see live TV here.</string>
     <string name="guide_loading">Loading channels from %1$s…</string>
-    <plurals name="guide_loaded">
-        <item quantity="one">Connected: %1$d channel, %2$d with guide data. The guide grid comes next.</item>
-        <item quantity="other">Connected: %1$d channels, %2$d with guide data. The guide grid comes next.</item>
+    <string name="guide_no_channels">%1$s has no channels yet. Add some in Dispatcharr.</string>
+    <string name="guide_favorites">Favorites</string>
+    <string name="guide_all">All channels</string>
+    <string name="guide_no_favorites">Hold OK on a channel to add it to Favorites.</string>
+    <string name="guide_favorite_added">%1$s added to Favorites</string>
+    <string name="guide_favorite_removed">%1$s removed from Favorites</string>
+    <string name="guide_no_info">No information</string>
+    <string name="guide_channel">%1$d %2$s</string>
+    <plurals name="guide_minutes_left">
+        <item quantity="one">%d min left</item>
+        <item quantity="other">%d min left</item>
     </plurals>
+    <string name="guide_no_player">No video player is installed. Install one, like VLC or Just Player, to watch.</string>
     <string name="guide_connect">Connect to Dispatcharr</string>
     <string name="guide_server">Server settings</string>
     <string name="library_title">Movies and series</string>

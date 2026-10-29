@@ -23,6 +23,8 @@ import tv.zapparr.apps.AppsDeck
 import tv.zapparr.apps.FavoritesStore
 import tv.zapparr.apps.openApp
 import tv.zapparr.apps.openSettings
+import tv.zapparr.live.GuideDeck
+import tv.zapparr.live.GuideStore
 import tv.zapparr.live.Lineup
 import tv.zapparr.live.Problem
 import tv.zapparr.live.Server
@@ -43,13 +45,13 @@ class HomeActivity : ComponentActivity() {
     private var firstLoad = true
 
     private lateinit var servers: ServerStore
-    private lateinit var guideBody: TextView
-    private lateinit var guideAction: Button
+    private lateinit var guide: GuideDeck
     private var lineupJob: Job? = null
-    // The server the Guide shows, and its channels once loaded. A failed load is retried on the next resume.
+    // The server the Guide shows and when its lineup loaded. A failed load is retried on the next
+    // resume, and a loaded one once it is GUIDE_REFRESH old.
     private var lineupShown = false
     private var lineupServer: Server? = null
-    private var lineup: Lineup? = null
+    private var lineupLoadedAt = 0L
     private var lineupFailed = false
 
     // Installs, updates, removals, and apps enabled or disabled (by the debloat tool too).
@@ -71,9 +73,9 @@ class HomeActivity : ComponentActivity() {
         findViewById<View>(R.id.settings).setOnClickListener { openSettings() }
 
         servers = ServerStore(this)
-        guideBody = findViewById(R.id.guide_body)
-        guideAction = findViewById(R.id.guide_action)
-        guideAction.setOnClickListener { startActivity(Intent(this, ServerActivity::class.java)) }
+        guide = GuideDeck(findViewById(R.id.deck_guide), GuideStore(this)) {
+            startActivity(Intent(this, ServerActivity::class.java))
+        }
 
         // Home never closes: Back from the Guide or Library returns to Apps.
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -137,24 +139,24 @@ class HomeActivity : ComponentActivity() {
         }
     }
 
-    // Loads channels and the guide when the saved server changes (or the last try failed).
+    // Loads channels and the guide when the saved server changes, the last try failed, or the guide is getting old.
     private fun loadLineup() {
         val server = servers.load()
-        if (lineupShown && server == lineupServer && !lineupFailed) return
+        val now = System.currentTimeMillis()
+        val sameServer = lineupShown && server == lineupServer
+        val current = server == null || lineupJob?.isActive == true || now - lineupLoadedAt < GUIDE_REFRESH
+        if (sameServer && !lineupFailed && current) return
         lineupJob?.cancel()
         lineupShown = true
         lineupServer = server
-        lineup = null
         lineupFailed = false
         if (server == null) {
-            guideBody.setText(R.string.guide_not_set_up)
-            guideAction.setText(R.string.guide_connect)
+            guide.showNotSetUp()
             return
         }
-        guideBody.text = getString(R.string.guide_loading, server.address)
-        guideAction.setText(R.string.guide_server)
+        // A refresh keeps the guide on screen until the new one is in.
+        if (!sameServer || !guide.showsGuide) guide.showLoading(server.address)
         lineupJob = lifecycleScope.launch {
-            val now = System.currentTimeMillis()
             val result = withContext(Dispatchers.IO) {
                 try {
                     XcClient(server).lineup(now - GUIDE_PAST, now + GUIDE_AHEAD)
@@ -165,12 +167,11 @@ class HomeActivity : ComponentActivity() {
                 }
             }
             if (result is Lineup) {
-                lineup = result
-                val guided = result.channels.count { it.epgId in result.programs }
-                guideBody.text = resources.getQuantityString(R.plurals.guide_loaded, result.channels.size, result.channels.size, guided)
+                lineupLoadedAt = now
+                guide.show(server, result)
             } else {
                 lineupFailed = true
-                guideBody.text = describe(result as Problem, server.address)
+                if (!guide.showsGuide) guide.showProblem(describe(result as Problem, server.address))
             }
         }
     }
@@ -183,5 +184,6 @@ class HomeActivity : ComponentActivity() {
         const val TIVIMATE = "ar.tvplayer.tv"
         const val GUIDE_PAST = 60 * 60 * 1000L
         const val GUIDE_AHEAD = 12 * 60 * 60 * 1000L
+        const val GUIDE_REFRESH = 60 * 60 * 1000L
     }
 }

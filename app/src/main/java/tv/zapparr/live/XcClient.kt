@@ -6,8 +6,11 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
-/** Everything the Guide shows: groups and channels in number order, and programs by XMLTV channel id. */
-data class Lineup(val groups: List<Group>, val channels: List<Channel>, val programs: Map<String, List<Program>>)
+/**
+ * Everything the Guide shows: groups and channels in number order, and programs by XMLTV channel
+ * id, known [until] (epoch milliseconds).
+ */
+data class Lineup(val groups: List<Group>, val channels: List<Channel>, val programs: Map<String, List<Program>>, val until: Long)
 
 /** Fetches from an Xtream Codes server. Blocking: call it off the main thread. */
 class XcClient(private val server: Server) {
@@ -28,7 +31,7 @@ class XcClient(private val server: Server) {
         } catch (e: Exception) { // IOException, XmlPullParserException
             emptyMap()
         }
-        return Lineup(groups, channels, programs)
+        return Lineup(groups, channels, programs, to)
     }
 
     private fun text(url: String) = open(url).use { it.readBytes().toString(Charsets.UTF_8) }

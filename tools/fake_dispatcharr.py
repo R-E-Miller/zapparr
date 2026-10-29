@@ -1,14 +1,17 @@
 """A stand-in Dispatcharr for testing Zapparr without a real server.
 
-Serves the Xtream Codes calls Zapparr makes, with made-up channels and a guide built around the
-current time. Listens on this computer only; the Android emulator reaches it as 10.0.2.2.
+Serves the Xtream Codes calls Zapparr makes, with made-up channels, logos and a guide built around
+the current time. Every tenth channel has no logo and channel 13 has no guide data, as happens on
+real servers. Listens on this computer only; the Android emulator reaches it as 10.0.2.2.
 
     python tools/fake_dispatcharr.py            # then in Zapparr: 10.0.2.2, user zapparr, password zapparr
     python tools/fake_dispatcharr.py --port 9292 --channels 300
 """
 import argparse
 import json
+import struct
 import time
+import zlib
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
@@ -24,6 +27,8 @@ SHOWS = {
     "Kids": ["Cartoon Block", "Science Club", "Puppet Town", "Afternoon Adventures"],
     "Music": ["Top 40 Countdown", "Classic Videos", "Live Sessions", "Late Night Mix"],
 }
+GROUP_COLORS = [(200, 60, 60), (40, 140, 70), (120, 70, 170), (30, 110, 190), (230, 150, 30), (200, 60, 150)]
+NO_GUIDE = 13
 HALF_HOUR = 30 * 60
 
 
@@ -45,6 +50,22 @@ def schedule(channel, now, hours_back=2, hours_ahead=24):
         i += 1
 
 
+def logo_png(channel, width=96, height=56):
+    """A logo-sized PNG: the group's color, with a white bar whose length follows the channel number."""
+    color = bytes(GROUP_COLORS[channel["group"]])
+    bar = 16 + channel["num"] * 7 % (width - 32)
+    rows = []
+    for y in range(height):
+        on_bar = height * 2 // 5 <= y < height * 3 // 5
+        rows.append(b"\x00" + b"".join(b"\xff\xff\xff" if on_bar and 16 <= x < 16 + bar else color for x in range(width)))
+
+    def chunk(kind, data):
+        return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data))
+
+    header = struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)  # 8-bit RGB
+    return b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", header) + chunk(b"IDAT", zlib.compress(b"".join(rows))) + chunk(b"IEND", b"")
+
+
 def xmltv_time(t):
     return datetime.fromtimestamp(t, timezone.utc).strftime("%Y%m%d%H%M%S +0000")
 
@@ -61,6 +82,11 @@ class Handler(BaseHTTPRequestHandler):
             if url.path == "/xmltv.php":
                 return self.reply(200, "application/xml", self.xmltv())
             return self.reply(200, "application/json", json.dumps(self.api(q.get("action"))))
+        if url.path.startswith("/logos/") and url.path.endswith(".png"):
+            num = url.path[len("/logos/"):-len(".png")]
+            channel = next((c for c in self.lineup if str(c["num"]) == num), None)
+            if channel:
+                return self.reply(200, "image/png", logo_png(channel))
         self.reply(404, "text/plain", "not found")
 
     def api(self, action):
@@ -71,7 +97,7 @@ class Handler(BaseHTTPRequestHandler):
             return [{"category_id": str(i + 1), "category_name": g, "parent_id": 0} for i, g in enumerate(GROUPS)]
         if action == "get_live_streams":
             return [{"num": c["num"], "name": c["name"], "stream_type": "live", "stream_id": c["stream_id"],
-                     "stream_icon": None, "epg_channel_id": str(c["num"]), "category_id": str(c["group"] + 1),
+                     "stream_icon": None if c["num"] % 10 == 0 else f"/logos/{c['num']}.png", "epg_channel_id": str(c["num"]), "category_id": str(c["group"] + 1),
                      "tv_archive": 0, "tv_archive_duration": 0} for c in self.lineup]
         return []
 
@@ -81,15 +107,17 @@ class Handler(BaseHTTPRequestHandler):
         out += [f'<channel id="{c["num"]}"><display-name>{escape(c["name"])}</display-name></channel>'
                 for c in self.lineup]
         for c in self.lineup:
+            if c["num"] == NO_GUIDE:
+                continue
             for start, stop, title, desc in schedule(c, now):
                 out.append(f'<programme channel="{c["num"]}" start="{xmltv_time(start)}" stop="{xmltv_time(stop)}">'
                            f'<title>{escape(title)}</title><desc>{escape(desc)}</desc></programme>')
         return "\n".join(out + ["</tv>\n"])
 
     def reply(self, code, kind, body):
-        data = body.encode("utf-8")
+        data = body if isinstance(body, bytes) else body.encode("utf-8")
         self.send_response(code)
-        self.send_header("Content-Type", f"{kind}; charset=utf-8")
+        self.send_header("Content-Type", kind if isinstance(body, bytes) else f"{kind}; charset=utf-8")
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()
         self.wfile.write(data)

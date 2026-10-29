@@ -58,6 +58,28 @@
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="Zapparr.Chip">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/chip_height</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:background">@drawable/chip_background</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/chip_text</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="Zapparr.GuideDetail">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:textSize">@dimen/guide_detail_text</item>
+    </style>
+
     <style name="Zapparr.FieldLabel">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

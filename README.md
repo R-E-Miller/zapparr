@@ -4,9 +4,9 @@ The set-top "launcharr" for Android TV: a lean home screen that works like a cab
 live TV guide from [Dispatcharr](https://github.com/Dispatcharr/Dispatcharr), and your movies and
 series sit side by side, with no ads and nothing deciding what you want to watch.
 
-> **Status: early development (Phase 2 under way).** The home screen, the app rows and the debloat
-> tool work. Zapparr connects to Dispatcharr and loads its channels and guide; the guide grid and
-> the Library come next.
+> **Status: early development (Phase 2 under way).** The home screen, the app rows, the debloat
+> tool and the live TV guide work; OK on a channel hands it to your video player. The Library comes
+> next.
 
 ## What it is
 
@@ -14,11 +14,15 @@ Three decks, side by side. Left and Right on the remote move between them at the
 
 | Apps | Guide | Library |
 |---|---|---|
-| Your favorite apps in a row, then every app on the box | Dispatcharr channels in a cable-style time grid *(Phase 2)* | Movies and series from Dispatcharr's VOD or your own catalog *(Phase 2)* |
+| Your favorite apps in a row, then every app on the box | Dispatcharr channels in a cable-style time grid | Movies and series from Dispatcharr's VOD or your own catalog *(Phase 2)* |
 
 - **Built for budget boxes.** Plain Android views, no background services, and no network use
   beyond your own Dispatcharr server. Made on and for the 2 GB onn 4K box.
 - **Favorites you arrange.** Hold OK on any app to add it, move it or open its App info.
+- **A guide like a cable box.** Channels down the side with their logos, two hours across, a line
+  at the current time. Filter by Favorites or by your Dispatcharr groups; hold OK on a channel to
+  make it a favorite; OK watches it in the video player you pick (VLC, Just Player and the like)
+  until Zapparr's own player arrives.
 - **Home always comes back.** Pressing Home returns to your first favorite; Back from the Guide or
   Library returns to Apps; the gear opens the TV's Settings.
 - **A reversible debloat tool** for the onn 4K: switches off telemetry, ad services and preloads
@@ -62,8 +66,8 @@ JDK 17 or newer and the Android SDK (Android Studio brings both).
 python -m unittest discover -s tools
 ```
 
-No Dispatcharr to test against? `python tools/fake_dispatcharr.py` serves 60 made-up channels and a
-guide around the current time. In the Android emulator, connect to `10.0.2.2` with user and password
+No Dispatcharr to test against? `python tools/fake_dispatcharr.py` serves 60 made-up channels with
+logos and a guide around the current time. In the Android emulator, connect to `10.0.2.2` with user and password
 `zapparr`.
 
 Every build, local or CI, is signed with the same public development key in [keystore/](keystore/README.md),
