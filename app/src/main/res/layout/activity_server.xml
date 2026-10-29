@@ -13,16 +13,20 @@
         android:paddingTop="@dimen/safe_vertical"
         android:paddingBottom="@dimen/safe_vertical">
 
+        <!-- The words come from the server's kind: Dispatcharr, or the library server. -->
         <TextView
+            android:id="@+id/server_heading"
             style="@style/Zapparr.PlaceholderTitle"
             android:text="@string/server_title" />
 
         <TextView
+            android:id="@+id/server_help_text"
             style="@style/Zapparr.PlaceholderBody"
             android:gravity="start"
             android:text="@string/server_help" />
 
         <TextView
+            android:id="@+id/address_label"
             style="@style/Zapparr.FieldLabel"
             android:labelFor="@id/address"
             android:text="@string/server_address" />
@@ -47,6 +51,7 @@
             android:inputType="text" />
 
         <TextView
+            android:id="@+id/password_label"
             style="@style/Zapparr.FieldLabel"
             android:labelFor="@id/password"
             android:text="@string/server_password" />

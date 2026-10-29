@@ -5,8 +5,8 @@ live TV guide from [Dispatcharr](https://github.com/Dispatcharr/Dispatcharr), an
 series sit side by side, with no ads and nothing deciding what you want to watch.
 
 > **Status: early development (Phase 2 under way).** The home screen, the app rows, the debloat
-> tool and the live TV guide work; OK on a channel hands it to your video player. The Library comes
-> next.
+> tool, the live TV guide and the Library's poster rows work; OK on a channel or a movie hands it
+> to your video player. Details pages, series episodes and resume come next.
 
 ## What it is
 
@@ -15,7 +15,7 @@ or press Up to the tabs at the top, as on Google TV, and pick one.
 
 | Apps | Guide | Library |
 |---|---|---|
-| Your favorite apps in a row, then every app on the box | Dispatcharr channels in a cable-style time grid | Movies and series from Dispatcharr's VOD or your own catalog *(Phase 2)* |
+| Your favorite apps in a row, then every app on the box | Dispatcharr channels in a cable-style time grid | Movies and series from your library server, in rows of posters by genre |
 
 - **Built for budget boxes.** Plain Android views, no background services, and no network use
   beyond your own Dispatcharr server. Made on and for the 2 GB onn 4K box.
@@ -54,6 +54,9 @@ on Windows, `winget install Google.PlatformTools`) and Python 3 for the debloat 
    `python tools/debloat.py --host 192.168.1.50 restore` puts everything back.
 5. **Connect Dispatcharr.** Press Right to the Guide, choose *Connect to Dispatcharr*, and enter the
    server's address (like `192.168.1.20:9191`), a Dispatcharr user name and that user's XC password.
+6. **Connect your library.** On the Library, choose *Connect library server* and enter the Xtream
+   Codes server with your movies and series and its login. For vod-organizer that's port 8000 and
+   your IPTV provider's login, the same one TiviMate uses.
 
 Don't uninstall Zapparr while it is Home and the stock launcher is disabled: run `restore` first.
 
@@ -68,7 +71,8 @@ python -m unittest discover -s tools
 ```
 
 No Dispatcharr to test against? `python tools/fake_dispatcharr.py` serves 60 made-up channels with
-logos and a guide around the current time. In the Android emulator, connect to `10.0.2.2` with user and password
+logos and a guide around the current time, and `python tools/fake_vod_organizer.py` a made-up
+library of movies and series on port 8000 (any login). In the Android emulator, connect to `10.0.2.2` with user and password
 `zapparr`.
 
 Every build, local or CI, is signed with the same public development key in [keystore/](keystore/README.md),

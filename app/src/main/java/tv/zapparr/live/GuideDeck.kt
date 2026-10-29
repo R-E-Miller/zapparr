@@ -18,7 +18,7 @@ import tv.zapparr.R
  * the server's groups) and the time grid. OK on the grid watches a channel; holding OK adds it to
  * Favorites or removes it.
  */
-class GuideDeck(deck: View, private val store: GuideStore, private val openServer: () -> Unit) {
+class GuideDeck(deck: View, private val store: GuideStore, private val openServer: () -> Unit) : ServerDeck<Lineup> {
 
     private val context: Context = deck.context
     private val message: View = deck.findViewById(R.id.guide_message)
@@ -37,8 +37,7 @@ class GuideDeck(deck: View, private val store: GuideStore, private val openServe
     private var filter = store.filter
     private var options: List<Pair<String, String>> = emptyList()
 
-    /** Whether the grid is up, rather than a message. */
-    val showsGuide get() = content.isVisible
+    override val showsContent get() = content.isVisible
 
     init {
         action.setOnClickListener { openServer() }
@@ -50,13 +49,14 @@ class GuideDeck(deck: View, private val store: GuideStore, private val openServe
         grid.onHold = ::toggleFavorite
     }
 
-    fun showNotSetUp() = showMessage(context.getString(R.string.guide_not_set_up), R.string.guide_connect)
+    override fun showNotSetUp() = showMessage(context.getString(R.string.guide_not_set_up), R.string.guide_connect)
 
-    fun showLoading(address: String) = showMessage(context.getString(R.string.guide_loading, address), R.string.guide_server)
+    override fun showLoading(address: String) = showMessage(context.getString(R.string.guide_loading, address), R.string.guide_server)
 
-    fun showProblem(text: String) = showMessage(text, R.string.guide_server)
+    override fun showProblem(text: String) = showMessage(text, R.string.guide_server)
 
-    fun show(server: Server, lineup: Lineup) {
+    override fun show(server: Server, loaded: Lineup) {
+        val lineup = loaded
         if (lineup.channels.isEmpty()) {
             showMessage(context.getString(R.string.guide_no_channels, server.address), R.string.guide_server)
             return

@@ -36,30 +36,26 @@ class XcClient(private val server: Server) {
         return Lineup(groups, channels, programs, to)
     }
 
-    fun movieGroups(): List<Group> = Xc.parseGroups(text(Xc.apiUrl(server, "get_vod_categories")))
+    /** Movies and series for the Library deck. */
+    fun catalog() = Catalog(movies(), series())
 
-    fun seriesGroups(): List<Group> = Xc.parseGroups(text(Xc.apiUrl(server, "get_series_categories")))
-
-    /** The movies in [group], in the server's order. */
-    fun movies(group: Group): List<Movie> = buildList {
-        entries(Xc.apiUrl(server, "get_vod_streams", "category_id" to group.id)) { Vod.movie(it, server.address)?.let(this::add) }
+    /**
+     * Every movie, by category. One request for the whole list: servers like vod-organizer ignore
+     * category_id, so asking per category would fetch everything each time. Streamed, so only the
+     * fields Zapparr shows are kept.
+     */
+    fun movies(): Library<Movie> {
+        val groups = Xc.parseGroups(text(Xc.apiUrl(server, "get_vod_categories")))
+        val movies = ArrayList<Movie>()
+        entries(Xc.apiUrl(server, "get_vod_streams")) { Vod.movie(it, server.address)?.let(movies::add) }
+        return Vod.library(groups, movies, Movie::group, Movie::added, Movie::id)
     }
 
-    fun series(group: Group): List<Series> = buildList {
-        entries(Xc.apiUrl(server, "get_series", "category_id" to group.id)) { Vod.series(it, server.address)?.let(this::add) }
-    }
-
-    /** The [count] most recently added movies, read from the whole library one at a time. */
-    fun newestMovies(count: Int): List<Movie> {
-        val newest = Vod.Newest(count, Movie::added)
-        entries(Xc.apiUrl(server, "get_vod_streams")) { Vod.movie(it, server.address)?.let(newest::offer) }
-        return newest.newestFirst()
-    }
-
-    fun newestSeries(count: Int): List<Series> {
-        val newest = Vod.Newest(count, Series::updated)
-        entries(Xc.apiUrl(server, "get_series")) { Vod.series(it, server.address)?.let(newest::offer) }
-        return newest.newestFirst()
+    fun series(): Library<Series> {
+        val groups = Xc.parseGroups(text(Xc.apiUrl(server, "get_series_categories")))
+        val series = ArrayList<Series>()
+        entries(Xc.apiUrl(server, "get_series")) { Vod.series(it, server.address)?.let(series::add) }
+        return Vod.library(groups, series, Series::group, Series::updated, Series::id)
     }
 
     fun movieDetails(movie: Movie): Details =

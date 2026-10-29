@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A poster. The name sits under the picture, so it shows while the picture loads or when there is
+     none. Focusable in touch mode, like the app tiles. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/poster_width"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/poster_card"
+        android:layout_width="@dimen/poster_width"
+        android:layout_height="@dimen/poster_height"
+        android:background="@drawable/tile_background"
+        android:duplicateParentState="true"
+        android:foreground="@drawable/tile_focus">
+
+        <TextView
+            android:id="@+id/poster_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="5"
+            android:padding="8dp"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/tile_name_text" />
+
+        <ImageView
+            android:id="@+id/poster_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no"
+            android:scaleType="centerCrop" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/poster_caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:alpha="0"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/tile_caption_text" />
+</LinearLayout>

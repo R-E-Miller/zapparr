@@ -1,10 +1,12 @@
 package tv.zapparr.live
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.core.content.edit
+import tv.zapparr.R
 import java.net.URI
 
-/** A Dispatcharr server (or any Xtream Codes server) and the XC login it gives the user. */
+/** An Xtream Codes server, Dispatcharr or the user's library server, and the login for it. */
 data class Server(val address: String, val username: String, val password: String) {
 
     companion object {
@@ -14,9 +16,9 @@ data class Server(val address: String, val username: String, val password: Strin
         /**
          * Turns what was typed ("192.168.1.20", "nas:9191/", "https://tv.example.com") into a base
          * URL without a trailing slash, or null if it can't be one. Typed with neither a scheme nor a
-         * port, the address gets http and Dispatcharr's port.
+         * port, the address gets http and [defaultPort].
          */
-        fun normalizeAddress(typed: String): String? {
+        fun normalizeAddress(typed: String, defaultPort: Int = DEFAULT_PORT): String? {
             val hasScheme = "://" in typed
             val text = typed.trim().trimEnd('/')
             if (text.isEmpty() || text.any { it.isWhitespace() }) return null
@@ -32,16 +34,33 @@ data class Server(val address: String, val username: String, val password: Strin
             val port = when {
                 uri.port != -1 -> ":${uri.port}"
                 hasScheme -> ""
-                else -> ":$DEFAULT_PORT"
+                else -> ":$defaultPort"
             }
             return "$scheme://$host$port${uri.rawPath.orEmpty()}"
         }
     }
 }
 
-/** Keeps the one server Zapparr talks to. The box is the user's own, so the password sits in private app storage. */
-class ServerStore(context: Context) {
-    private val prefs = context.getSharedPreferences("server", Context.MODE_PRIVATE)
+/**
+ * The two servers Zapparr talks to: Dispatcharr for live TV, and the user's library server
+ * (vod-organizer, on port 8000) for movies and series. Each has its own saved login and its own
+ * wording on the server screen.
+ */
+enum class ServerKind(
+    val prefs: String,
+    val defaultPort: Int,
+    @param:StringRes val title: Int,
+    @param:StringRes val help: Int,
+    @param:StringRes val addressLabel: Int,
+    @param:StringRes val passwordLabel: Int,
+) {
+    LIVE("server", Server.DEFAULT_PORT, R.string.server_title, R.string.server_help, R.string.server_address, R.string.server_password),
+    LIBRARY("library", 8000, R.string.library_server_title, R.string.library_server_help, R.string.library_server_address, R.string.library_server_password),
+}
+
+/** Keeps one server of each [ServerKind]. The box is the user's own, so the password sits in private app storage. */
+class ServerStore(context: Context, kind: ServerKind) {
+    private val prefs = context.getSharedPreferences(kind.prefs, Context.MODE_PRIVATE)
 
     fun load(): Server? {
         val address = prefs.getString(ADDRESS, null) ?: return null

@@ -194,21 +194,85 @@
             </LinearLayout>
         </FrameLayout>
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/deck_library"
-            style="@style/Zapparr.Placeholder">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false">
 
-            <TextView
-                style="@style/Zapparr.PlaceholderTitle"
-                android:text="@string/library_title" />
+            <!-- Until the library loads: a message, and a button to the library server screen. -->
+            <LinearLayout
+                android:id="@+id/library_message"
+                style="@style/Zapparr.Placeholder">
 
-            <TextView
-                style="@style/Zapparr.PlaceholderBody"
-                android:text="@string/library_body" />
+                <TextView
+                    style="@style/Zapparr.PlaceholderTitle"
+                    android:text="@string/library_title" />
 
-            <Button
-                android:id="@+id/library_action"
-                style="@style/Zapparr.Action" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/library_body"
+                    style="@style/Zapparr.PlaceholderBody"
+                    android:text="@string/library_not_set_up" />
+
+                <Button
+                    android:id="@+id/library_action"
+                    style="@style/Zapparr.Action" />
+            </LinearLayout>
+
+            <!-- Once it has: Movies or Series, and rows of posters, which take focus when the deck opens. -->
+            <LinearLayout
+                android:id="@+id/library_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipChildren="false"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/safe_horizontal"
+                    android:paddingTop="@dimen/guide_top"
+                    android:paddingEnd="@dimen/safe_horizontal">
+
+                    <TextView
+                        android:id="@+id/library_movies"
+                        style="@style/Zapparr.Chip"
+                        android:text="@string/library_movies" />
+
+                    <TextView
+                        android:id="@+id/library_series"
+                        style="@style/Zapparr.Chip"
+                        android:text="@string/library_series" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/library_settings"
+                        style="@style/Zapparr.Chip"
+                        android:layout_marginEnd="0dp"
+                        android:text="@string/library_server_settings" />
+                </LinearLayout>
+
+                <androidx.leanback.widget.VerticalGridView
+                    android:id="@+id/library_rows"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:focusedByDefault="true"
+                    android:paddingStart="@dimen/safe_horizontal"
+                    android:paddingTop="@dimen/library_rows_top"
+                    android:paddingEnd="@dimen/safe_horizontal"
+                    android:paddingBottom="@dimen/safe_vertical"
+                    android:verticalSpacing="@dimen/row_spacing"
+                    app:focusOutFront="true" />
+            </LinearLayout>
+        </FrameLayout>
     </tv.zapparr.home.DeckPager>
 </LinearLayout>

@@ -90,7 +90,7 @@ class GuideView @JvmOverloads constructor(
     private val date = Date()
     private val timeFormat = DateFormat.getTimeFormat(context)
     private val noInfo = context.getString(R.string.guide_no_info)
-    private val logos = Logos(logoHeight.toInt()) { invalidate() }
+    private val logos = Images(logoHeight.toInt(), LOGO_CACHE) { invalidate() }
 
     private val tick = object : Runnable {
         override fun run() {
@@ -351,6 +351,7 @@ class GuideView @JvmOverloads constructor(
 
     private companion object {
         const val TICK_MS = 30_000L
+        const val LOGO_CACHE = 4 * 1024 * 1024
         val OK_KEYS = setOf(KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER)
     }
 }

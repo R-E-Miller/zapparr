@@ -6,18 +6,23 @@ plan, the verified Dispatcharr and TvProvider facts, and the open questions.
 
 ## Layout
 
-- `app/src/main/java/tv/zapparr/home/`: `HomeActivity` (the HOME activity), `DeckPager` (decks and
-  Left/Right at row edges), `Decks`.
+- `app/src/main/java/tv/zapparr/home/`: `HomeActivity` (the HOME activity), `DeckPager` (decks,
+  Left/Right at row edges, Up to the tabs), `Decks`, `ServerFeed` (keeps a deck loaded from its server).
 - `app/src/main/java/tv/zapparr/apps/`: app discovery (`AppRepository`), the Favorites rules and
   store, the Apps deck rows and tiles, launch helpers.
-- `app/src/main/java/tv/zapparr/live/`: Dispatcharr over the Xtream Codes API. `Server` (address
-  and login), `Xc` (URLs and JSON replies), `Xmltv` (streaming guide reader), `Vod` (movies and
-  series), `XcClient` (HTTP, streaming the big lists),
-  `ServerActivity` (the connect screen). The Guide deck: `Guide` (cells, scrolling and filters,
-  unit-tested), `GuideView` (the custom-drawn grid), `GuideDeck` (details, filters, favorite
-  channels), `Logos`, `watch` (hands a stream to a video player).
+- `app/src/main/java/tv/zapparr/live/`: the Xtream Codes API, for Dispatcharr (live TV) and the
+  library server (movies and series). `Server` (address, login, `ServerKind`), `Xc` (URLs and JSON
+  replies), `Xmltv` (streaming guide reader), `Vod` (movies and series), `XcClient` (HTTP, streaming
+  the big lists), `ServerActivity` (the connect screen, for either kind), `Images` (logos and
+  posters), `watch` (hands a stream to a video player). The Guide deck: `Guide` (cells, scrolling
+  and filters, unit-tested), `GuideView` (the custom-drawn grid), `GuideDeck` (details, filters,
+  favorite channels).
+- `app/src/main/java/tv/zapparr/library/`: the Library deck: `LibraryDeck` (Movies or Series, rows
+  of posters), `PosterRows`.
 - `tools/debloat.py`: probe, plan, apply, set-home, restore over adb. `tools/lists/`: per-box lists.
-- `tools/fake_dispatcharr.py`: a stand-in XC server for the emulator (`10.0.2.2`, `zapparr`/`zapparr`).
+- `tools/fake_dispatcharr.py`: a stand-in Dispatcharr (live TV) for the emulator (`10.0.2.2`,
+  `zapparr`/`zapparr`). `tools/fake_vod_organizer.py`: a stand-in for the user's movie and series
+  server (`10.0.2.2:8000`, any login). Neither holds real logins or keys: keep it that way.
 - `keystore/`: the public development signing key used by every build.
 
 ## Commands

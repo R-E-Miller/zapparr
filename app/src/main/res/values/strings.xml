@@ -31,9 +31,16 @@
     <string name="guide_connect">Connect to Dispatcharr</string>
     <string name="guide_server">Server settings</string>
     <string name="library_title">Movies and series</string>
-    <string name="library_body">Your VOD library arrives in Phase 2.</string>
-    <string name="open_app">Open %1$s</string>
-    <string name="coming_soon">Coming soon</string>
+    <string name="library_not_set_up">Connect Zapparr to the server with your movies and series to browse them here.</string>
+    <string name="library_connect">Connect library server</string>
+    <string name="library_server_settings">Server settings</string>
+    <string name="library_loading">Loading your library from %1$s…</string>
+    <string name="library_empty">%1$s has no movies or series.</string>
+    <string name="library_movies">Movies</string>
+    <string name="library_series">Series</string>
+    <string name="library_newest">Recently added</string>
+    <string name="library_shelf">%1$s · %2$,d</string>
+    <string name="library_series_soon">Seasons and episodes come with the next update.</string>
     <string name="cannot_open">Couldn\'t open %1$s</string>
 
     <string name="menu_add_favorite">Add to Favorites</string>
@@ -47,13 +54,17 @@
     <string name="server_address">Address, like 192.168.1.20:9191</string>
     <string name="server_username">User name</string>
     <string name="server_password">XC password</string>
+    <string name="library_server_title">Library server</string>
+    <string name="library_server_help">The Xtream Codes server with your movies and series, and its login. For vod-organizer, that\'s port 8000 and your IPTV provider\'s user name and password, the same login TiviMate uses.</string>
+    <string name="library_server_address">Address, like 192.168.1.20:8000</string>
+    <string name="library_server_password">Password</string>
     <string name="server_connect">Connect</string>
     <string name="server_forget">Forget server</string>
     <string name="server_connecting">Connecting to %1$s…</string>
     <string name="server_bad_address">That doesn\'t look like an address. Try something like 192.168.1.20:9191.</string>
     <string name="server_no_username">Enter the user name.</string>
     <string name="problem_unreachable">Couldn\'t reach %1$s. Check the address and that the server is on.</string>
-    <string name="problem_not_xc">%1$s answered, but not like Dispatcharr. Check the address and port.</string>
-    <string name="problem_wrong_login">The server didn\'t accept that user name and XC password.</string>
+    <string name="problem_not_xc">%1$s answered, but not like an Xtream Codes server. Check the address and port.</string>
+    <string name="problem_wrong_login">The server didn\'t accept that user name and password.</string>
     <string name="problem_account_inactive">The server says this account is not active.</string>
 </resources>

@@ -7,7 +7,6 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
-import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
@@ -18,21 +17,20 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import tv.zapparr.R
-import tv.zapparr.apps.AppEntry
 import tv.zapparr.apps.AppRepository
 import tv.zapparr.apps.AppsDeck
 import tv.zapparr.apps.FavoritesStore
-import tv.zapparr.apps.openApp
 import tv.zapparr.apps.openSettings
+import tv.zapparr.library.LibraryDeck
+import tv.zapparr.library.LibraryStore
+import tv.zapparr.live.Catalog
 import tv.zapparr.live.GuideDeck
 import tv.zapparr.live.GuideStore
 import tv.zapparr.live.Lineup
-import tv.zapparr.live.Problem
-import tv.zapparr.live.Server
 import tv.zapparr.live.ServerActivity
+import tv.zapparr.live.ServerKind
 import tv.zapparr.live.ServerStore
 import tv.zapparr.live.XcClient
-import tv.zapparr.live.XcException
 import tv.zapparr.live.describe
 
 /** The home screen: a clock bar over three decks, Apps, Guide and Library. */
@@ -45,15 +43,10 @@ class HomeActivity : ComponentActivity() {
     private var loadJob: Job? = null
     private var firstLoad = true
 
-    private lateinit var servers: ServerStore
-    private lateinit var guide: GuideDeck
-    private var lineupJob: Job? = null
-    // The server the Guide shows and when its lineup loaded. A failed load is retried on the next
-    // resume, and a loaded one once it is GUIDE_REFRESH old.
-    private var lineupShown = false
-    private var lineupServer: Server? = null
-    private var lineupLoadedAt = 0L
-    private var lineupFailed = false
+    // The Guide from Dispatcharr, the Library from the library server; each reloads as its server
+    // changes or its content ages.
+    private lateinit var guideFeed: ServerFeed<Lineup>
+    private lateinit var libraryFeed: ServerFeed<Catalog>
 
     // Installs, updates, removals, and apps enabled or disabled (by the debloat tool too).
     private val packageChanges = object : BroadcastReceiver() {
@@ -77,9 +70,14 @@ class HomeActivity : ComponentActivity() {
             setOnKeyListener(downInto { decks.current })
         }
 
-        servers = ServerStore(this)
-        guide = GuideDeck(findViewById(R.id.deck_guide), GuideStore(this)) {
-            startActivity(Intent(this, ServerActivity::class.java))
+        val guide = GuideDeck(findViewById(R.id.deck_guide), GuideStore(this)) { ServerActivity.open(this, ServerKind.LIVE) }
+        guideFeed = ServerFeed(lifecycleScope, ServerStore(this, ServerKind.LIVE), guide, GUIDE_REFRESH, this::describe) { server ->
+            val now = System.currentTimeMillis()
+            XcClient(server).lineup(now - GUIDE_PAST, now + GUIDE_AHEAD)
+        }
+        val library = LibraryDeck(findViewById(R.id.deck_library), LibraryStore(this)) { ServerActivity.open(this, ServerKind.LIBRARY) }
+        libraryFeed = ServerFeed(lifecycleScope, ServerStore(this, ServerKind.LIBRARY), library, LIBRARY_REFRESH, this::describe) { server ->
+            XcClient(server).catalog()
         }
 
         // Home never closes: Back from the Guide, the Library or the top bar returns to the Apps deck.
@@ -101,7 +99,8 @@ class HomeActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        loadLineup()
+        guideFeed.refresh()
+        libraryFeed.refresh()
     }
 
     override fun onDestroy() {
@@ -123,60 +122,9 @@ class HomeActivity : ComponentActivity() {
         loadJob = lifecycleScope.launch {
             val apps = withContext(Dispatchers.IO) { repository.load() }
             appsDeck.submit(apps)
-            bindLibraryAction(apps)
             if (firstLoad) {
                 firstLoad = false
                 appsDeck.focusFirst()
-            }
-        }
-    }
-
-    // Until the Library arrives, its deck opens TiviMate if it's installed.
-    private fun bindLibraryAction(apps: List<AppEntry>) {
-        val tivimate = apps.firstOrNull { it.packageName == TIVIMATE }
-        val button = findViewById<Button>(R.id.library_action)
-        if (tivimate != null) {
-            button.text = getString(R.string.open_app, tivimate.label)
-            button.setOnClickListener { openApp(tivimate) }
-        } else {
-            button.setText(R.string.coming_soon)
-            button.setOnClickListener(null)
-        }
-    }
-
-    // Loads channels and the guide when the saved server changes, the last try failed, or the guide is getting old.
-    private fun loadLineup() {
-        val server = servers.load()
-        val now = System.currentTimeMillis()
-        val sameServer = lineupShown && server == lineupServer
-        val current = server == null || lineupJob?.isActive == true || now - lineupLoadedAt < GUIDE_REFRESH
-        if (sameServer && !lineupFailed && current) return
-        lineupJob?.cancel()
-        lineupShown = true
-        lineupServer = server
-        lineupFailed = false
-        if (server == null) {
-            guide.showNotSetUp()
-            return
-        }
-        // A refresh keeps the guide on screen until the new one is in.
-        if (!sameServer || !guide.showsGuide) guide.showLoading(server.address)
-        lineupJob = lifecycleScope.launch {
-            val result = withContext(Dispatchers.IO) {
-                try {
-                    XcClient(server).lineup(now - GUIDE_PAST, now + GUIDE_AHEAD)
-                } catch (e: XcException) {
-                    e.problem
-                } catch (e: Exception) { // IOException while reading a reply
-                    Problem.UNREACHABLE
-                }
-            }
-            if (result is Lineup) {
-                lineupLoadedAt = now
-                guide.show(server, result)
-            } else {
-                lineupFailed = true
-                if (!guide.showsGuide) guide.showProblem(describe(result as Problem, server.address))
             }
         }
     }
@@ -204,9 +152,10 @@ class HomeActivity : ComponentActivity() {
     }
 
     private companion object {
-        const val TIVIMATE = "ar.tvplayer.tv"
         const val GUIDE_PAST = 60 * 60 * 1000L
         const val GUIDE_AHEAD = 12 * 60 * 60 * 1000L
         const val GUIDE_REFRESH = 60 * 60 * 1000L
+        // vod-organizer re-syncs with the provider every six hours.
+        const val LIBRARY_REFRESH = 6 * 60 * 60 * 1000L
     }
 }

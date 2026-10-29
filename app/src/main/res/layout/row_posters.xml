@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One row of the Library deck: Recently added, or a category, and its posters. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/row_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/row_title_text" />
+
+    <androidx.leanback.widget.HorizontalGridView
+        android:id="@+id/row_posters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:horizontalSpacing="@dimen/poster_spacing"
+        app:rowHeight="wrap_content" />
+</LinearLayout>

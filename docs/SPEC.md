@@ -23,8 +23,12 @@ rows or "For You" guessing. Plus a reversible debloat of the box itself.
   (`com.google.android.youtube.tvmusic`), local news apps (package names not yet known).
 - **Live TV**: a self-hosted Dispatcharr server: stream proxy, channel numbers and groups, logos,
   XMLTV EPG.
-- **VOD**: a custom script that scrapes the provider's VOD into `.strm` files for TiviMate.
-- **Player today**: TiviMate for live TV and `.strm` playback.
+- **VOD**: the user's own `vod-organizer` container on the home server
+  (`http://192.168.68.74:8000`), not Dispatcharr. It serves the provider's movies (~20,000) and
+  series (~6,700) over the Xtream Codes API, regrouped into TMDb genres with TMDb posters and
+  plots. Its `/movie/` and `/series/` URLs redirect (302) to the provider, which allows **one
+  connection at a time**.
+- **Player today**: TiviMate.
 
 ## Layout: three decks
 
@@ -63,9 +67,13 @@ The gear opens the TV's Settings, the only way into Settings once the stock laun
       change deck past either end; CH+ and CH- page. Filters: Favorites (hold OK on a channel), All
       channels, and the server's groups. OK hands the channel to a video player. The guide reloads
       once it is an hour old.
-   3. *Library*: movies and series, details, play and resume. In three parts: (a) reading the
-      library (*built*: `Vod`, `XcClient`, tested), (b) the Library deck's poster rows, (c) the
-      details screen and playback with resume.
+   3. *Library*: movies and series from vod-organizer, with its own server setting (separate from
+      Dispatcharr), details, play and resume. In three parts: (a) reading the library (*built*:
+      `Vod`, `XcClient`, tested against replies shaped from vod-organizer's source; to check against
+      the real server), (b) the Library deck (*built*): its own server screen (port 8000 when none
+      is typed), Movies or Series, rows of posters (Recently added, then each genre that has any),
+      loaded once and again every 6 hours, OK on a movie plays it, (c) the details screen, series
+      seasons and episodes, and playback with resume.
    4. *Continue Watching* from Watch Next and an *On now* row on the Apps deck.
 
    M3U and XMLTV output stay a fallback for servers without the XC API.
@@ -111,22 +119,9 @@ What the XC replies hold, from `apps/output/views.py` and `apps/output/epg.py`:
 - `get_short_epg` (per channel, base64 titles) exists but means one request per channel; the guide
   uses `xmltv.php` instead.
 
-Movies and series, from `xc_get_vod_streams`, `xc_get_series`, `xc_get_vod_info` and
-`xc_get_series_info` in `apps/output/views.py`, and the routes in `dispatcharr/urls.py`:
-
-- `get_vod_streams` and `get_series` take `category_id`, so the Library loads one category at a
-  time. Without it they return the whole library, which the client streams for "Recently added".
-- A movie entry: `stream_id` (int), `name` (with a language suffix), `stream_icon` (absolute URL or
-  null), `rating` (raw, or `"0"` for none), `added` (epoch seconds as a string), `year`,
-  `container_extension` (default `mp4`), plus `plot`, `genre` and others.
-- A series entry: `series_id`, `cover`, `last_modified` (epoch seconds as a string; there is no
-  `added`), `rating` (a string), `release_date`.
-- `get_vod_info`: `info` (`plot`, `genre`, `director`, `cast`/`actors`, `backdrop_path` list, `year`,
-  `rating`) and `movie_data`. **No duration** for movies.
-- `get_series_info`: `seasons` (`season_number`, `name`), `info`, and `episodes` keyed by season
-  number. An episode: `id` (int), `season`, `episode_num`, `title`, `container_extension`, and
-  `info` with `overview` (not `plot`), `movie_image`, `duration_secs` and `duration` (`HH:MM:SS`).
-- Streams: `/movie/<user>/<pass>/<stream_id>.<ext>` and `/series/<user>/<pass>/<episode id>.<ext>`.
+Dispatcharr also serves movies and series over the same XC calls (`xc_get_vod_streams` and the
+like in `apps/output/views.py`: dates in `added`/`last_modified`, `category_id` honored, episode
+text in `overview`). `Vod` reads that shape too, but the user's library comes from vod-organizer.
 
 M3U and EPG output obey Dispatcharr's network-access settings. Users get XC credentials ("XC
 password") in Dispatcharr.
@@ -134,6 +129,40 @@ password") in Dispatcharr.
 **Plan**: use the XC API as the main source. One login covers channels (numbers, groups and logos
 as managed in Dispatcharr), EPG, catch-up and VOD with metadata, and the same client works with any
 XC-compatible server. M3U and XMLTV stay as a fallback.
+
+## vod-organizer: what the user's library server answers
+
+Read from its source (`app.py`, as the user pasted it on 2026-10-29), not yet from the running
+server. `tools/fake_vod_organizer.py` answers the same way.
+
+- **Login**: never checked. A bare `player_api.php` call answers `auth: 1`, `status: "Active"`, and
+  echoes the provider's own login to any caller on the LAN.
+- **Categories**: `get_vod_categories` and `get_series_categories` both list the same 28 TMDb genres
+  plus `Uncategorized`, ids `"1"` to `"28"` by name, including genres with nothing in them.
+- **`category_id` is ignored**: `get_vod_streams` always returns all movies (about 20,000) and
+  `get_series` all series (about 6,700). So the Library fetches each list once, streams it, and
+  sorts it into categories on the box.
+- **A movie**: `stream_id` (the provider's), `name` as `Title (Country) (Year)`, `stream_icon` and
+  `cover` (a TMDb `w500` poster, or the provider's), `backdrop_path` (`[TMDb original]` or `[]`),
+  `plot`, `rating` (a string, `"0"` for none), `year` (a string), `category_id`,
+  `container_extension`. **No date**: "Recently added" goes by highest id, assuming the provider
+  numbers new items upward (to check).
+- **A series**: `series_id`, `name`, `cover`, `backdrop_path`, `plot`, `genre`, `releaseDate` (a
+  year), `rating`, `category_id`. No date either.
+- `get_vod_info`: `info` with `name`, `cover_big`, `plot`, `rating`, `releasedate` (the year) and
+  `backdrop_path`; no genre (use the category's name) and no duration. `cast` and `director` are
+  always empty.
+- `get_series_info`: the provider's own reply passed through (with the TMDb cover and plot put into
+  `info`), so episodes look like a typical XC panel's: string `id`s, the description in `plot`,
+  `duration_secs` and `duration`. It asks the provider each time, so it is slower than the lists.
+- **Images**: TMDb URLs. `original` backdrops can be several megabytes, so Zapparr asks TMDb for
+  `w1280` backdrops, `w342` posters and `w300` episode stills.
+- **Streams**: `/movie/<user>/<pass>/<id>.<ext>` and `/series/...` answer `302` to the same path on
+  the provider, so `<user>` and `<pass>` must be the **provider's** login: the Library's login is the
+  one TiviMate uses for this server. Only `GET` is handled; `HEAD` gets `501`.
+- **One connection**: the provider allows one stream at a time. Zapparr never plays anything
+  itself in Phase 2, so handing a stream to a player leaves the line free; Phase 3's live video
+  behind the menus has to stop before anything else plays.
 
 ## Watch Next (Continue Watching): how a third-party launcher can read it
 
@@ -195,7 +224,7 @@ From the tested CleanYourTV list for this box; `tools/debloat.py` enforces them.
 |---|---|---|
 | Hand streams to TiviMate with `ACTION_VIEW` for `video/*` | Not documented by TiviMate; unverified | Hand off to a chosen player; test TiviMate with the command above |
 | Read Watch Next from TvProvider | True, but only with `READ_TV_LISTINGS` and only for apps that publish there | Ask for the permission; check which apps publish on the box |
-| VOD from the `.strm` scraper and a `catalog.json` | Dispatcharr now serves movies and series with metadata over the XC API | XC first; the `.strm` catalog becomes the fallback |
+| VOD from the `.strm` scraper and a `catalog.json` | The user's vod-organizer serves movies and series with TMDb metadata over the XC API | Read vod-organizer's XC API, with its own server setting |
 | Leanback project | `androidx.leanback`'s full UI library isn't needed | Plain views plus `leanback-grid` for rows |
 | minSdk 26 | Kept. The SDK needs compileSdk 37 for current AndroidX; targetSdk stays 36 | |
 | Stock launcher is `launcherx` | Only on Google TV; the 2021 onn Android TV box uses `tvlauncher` | `debloat.py` handles both |
@@ -209,8 +238,8 @@ From the tested CleanYourTV list for this box; `tools/debloat.py` enforces them.
 
 1. The onn 4K (1st gen, not the Pro): the `probe` output will confirm the Android version and stock
    launcher (`python tools/debloat.py --host <ip> probe`).
-2. *Answered*: Dispatcharr has the XC API on, so Live TV and VOD come from its XC endpoints and the
-   `.strm` scraper is only a fallback. Local news apps are added from the Apps deck (hold OK), not
+2. *Answered*: Live TV comes from Dispatcharr's XC API; movies and series from vod-organizer's XC
+   API (corrected 2026-10-29: not from Dispatcharr). Local news apps are added from the Apps deck (hold OK), not
    as defaults.
 3. Does TiviMate accept a stream URL? Run the test command above.
 4. Do Prime Video and Paramount+ publish Watch Next rows on this box?
