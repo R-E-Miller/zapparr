@@ -41,8 +41,11 @@ they slide to the next deck. They never jump diagonally into another row.
 3. **Library** *(Phase 2)*: poster grid of movies and series with Recently added, genres, details and
    resume.
 
-Home on Home returns to the first favorite. Back from Guide or Library returns to Apps. A gear in
-the clock bar opens the TV's Settings, the only way into Settings once the stock launcher is off.
+The tabs at the top work like Google TV's: Up from the top of any deck reaches its tab; Left and
+Right move along Apps, Guide, Library and a Settings gear, showing each deck as its tab is focused;
+Down or OK goes back into the deck where it left off. So no deck needs paging through to leave it.
+Home on Home returns to the first favorite. Back from Guide, Library or the tabs returns to Apps.
+The gear opens the TV's Settings, the only way into Settings once the stock launcher is off.
 
 ## Phases
 
@@ -60,7 +63,9 @@ the clock bar opens the TV's Settings, the only way into Settings once the stock
       change deck past either end; CH+ and CH- page. Filters: Favorites (hold OK on a channel), All
       channels, and the server's groups. OK hands the channel to a video player. The guide reloads
       once it is an hour old.
-   3. *Library*: movies and series, details, play and resume.
+   3. *Library*: movies and series, details, play and resume. In three parts: (a) reading the
+      library (*built*: `Vod`, `XcClient`, tested), (b) the Library deck's poster rows, (c) the
+      details screen and playback with resume.
    4. *Continue Watching* from Watch Next and an *On now* row on the Apps deck.
 
    M3U and XMLTV output stay a fallback for servers without the XC API.
@@ -106,6 +111,23 @@ What the XC replies hold, from `apps/output/views.py` and `apps/output/epg.py`:
 - `get_short_epg` (per channel, base64 titles) exists but means one request per channel; the guide
   uses `xmltv.php` instead.
 
+Movies and series, from `xc_get_vod_streams`, `xc_get_series`, `xc_get_vod_info` and
+`xc_get_series_info` in `apps/output/views.py`, and the routes in `dispatcharr/urls.py`:
+
+- `get_vod_streams` and `get_series` take `category_id`, so the Library loads one category at a
+  time. Without it they return the whole library, which the client streams for "Recently added".
+- A movie entry: `stream_id` (int), `name` (with a language suffix), `stream_icon` (absolute URL or
+  null), `rating` (raw, or `"0"` for none), `added` (epoch seconds as a string), `year`,
+  `container_extension` (default `mp4`), plus `plot`, `genre` and others.
+- A series entry: `series_id`, `cover`, `last_modified` (epoch seconds as a string; there is no
+  `added`), `rating` (a string), `release_date`.
+- `get_vod_info`: `info` (`plot`, `genre`, `director`, `cast`/`actors`, `backdrop_path` list, `year`,
+  `rating`) and `movie_data`. **No duration** for movies.
+- `get_series_info`: `seasons` (`season_number`, `name`), `info`, and `episodes` keyed by season
+  number. An episode: `id` (int), `season`, `episode_num`, `title`, `container_extension`, and
+  `info` with `overview` (not `plot`), `movie_image`, `duration_secs` and `duration` (`HH:MM:SS`).
+- Streams: `/movie/<user>/<pass>/<stream_id>.<ext>` and `/series/<user>/<pass>/<episode id>.<ext>`.
+
 M3U and EPG output obey Dispatcharr's network-access settings. Users get XC credentials ("XC
 password") in Dispatcharr.
 
@@ -138,6 +160,12 @@ Checked against AOSP `TvProvider` (`TvProvider.java`, `AndroidManifest.xml`):
 - **Default handoff**: `ACTION_VIEW` with the stream URL and `video/*`, to a player the user picks
   (Just Player, VLC, MX Player, Kodi) or the system chooser. Phase 3 replaces this with the built-in
   player.
+- **Resume** needs the player to say where it stopped, as an activity result:
+  - VLC ([Android player intents](https://wiki.videolan.org/Android_Player_Intents/)): takes
+    `position` (ms) and `title`; returns `extra_position` and `extra_duration` (long).
+  - MX Player's API, which Just Player implements in part, including the result (its author, in
+    moneytoo/Player issue #203): takes `position` and `return_result`; returns `position`,
+    `duration` and `end_by`. Not documented by Just Player itself: check on the box.
 - **Recent channels**: Zapparr records what it tunes. Knowing what TiviMate played would mean polling
   Dispatcharr's active streams (untested).
 
@@ -173,9 +201,6 @@ From the tested CleanYourTV list for this box; `tools/debloat.py` enforces them.
 | Stock launcher is `launcherx` | Only on Google TV; the 2021 onn Android TV box uses `tvlauncher` | `debloat.py` handles both |
 
 ## Known issues
-
-- **The Library is a long way Right from the Guide.** Right in the grid moves through 12 hours of
-  programs; the quick way is Up to the filters, then Right past Server settings.
 
 - **Down doesn't keep the column.** Moving Down from a Favorites tile lands on the first tile of All
   apps, because each leanback row remembers its own position. A cable-box feel would keep the column.

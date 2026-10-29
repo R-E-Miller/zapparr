@@ -21,6 +21,8 @@
     <string name="guide_favorite_removed">%1$s removed from Favorites</string>
     <string name="guide_no_info">No information</string>
     <string name="guide_channel">%1$d %2$s</string>
+    <string name="guide_time_range">%1$s – %2$s</string>
+    <string name="guide_time_range_day">%1$s %2$s – %3$s</string>
     <plurals name="guide_minutes_left">
         <item quantity="one">%d min left</item>
         <item quantity="other">%d min left</item>

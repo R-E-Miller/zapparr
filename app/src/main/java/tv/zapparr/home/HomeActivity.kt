@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -69,18 +70,22 @@ class HomeActivity : ComponentActivity() {
         tabs = listOf(R.id.tab_apps, R.id.tab_guide, R.id.tab_library).map { findViewById(it) }
         decks.onDeckChanged = ::showTab
         showTab(decks.current)
+        bindTabs()
 
-        findViewById<View>(R.id.settings).setOnClickListener { openSettings() }
+        findViewById<View>(R.id.settings).apply {
+            setOnClickListener { openSettings() }
+            setOnKeyListener(downInto { decks.current })
+        }
 
         servers = ServerStore(this)
         guide = GuideDeck(findViewById(R.id.deck_guide), GuideStore(this)) {
             startActivity(Intent(this, ServerActivity::class.java))
         }
 
-        // Home never closes: Back from the Guide or Library returns to Apps.
+        // Home never closes: Back from the Guide, the Library or the top bar returns to the Apps deck.
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (decks.current != Decks.APPS) decks.show(Decks.APPS, takeFocus = true)
+                if (decks.current != Decks.APPS || !decks.hasFocus()) decks.show(Decks.APPS, takeFocus = true)
             }
         })
 
@@ -174,6 +179,24 @@ class HomeActivity : ComponentActivity() {
                 if (!guide.showsGuide) guide.showProblem(describe(result as Problem, server.address))
             }
         }
+    }
+
+    // The tabs work like Google TV's: focusing one shows its deck, and Down or OK goes into it. Up
+    // from the top of any deck comes back to its tab, so no deck needs paging through to leave it.
+    private fun bindTabs() {
+        tabs.forEachIndexed { index, tab ->
+            tab.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) decks.show(index, takeFocus = false) }
+            tab.setOnClickListener { decks.show(index, takeFocus = true) }
+            tab.setOnKeyListener(downInto { index })
+        }
+        decks.exitUp = { tabs[decks.current] }
+    }
+
+    // Down from the top bar goes into the deck where it left off, not to whatever is nearest below.
+    private fun downInto(deck: () -> Int) = View.OnKeyListener { _, keyCode, event ->
+        if (keyCode != KeyEvent.KEYCODE_DPAD_DOWN) return@OnKeyListener false
+        if (event.action == KeyEvent.ACTION_DOWN) decks.show(deck(), takeFocus = true)
+        true
     }
 
     private fun showTab(index: Int) {

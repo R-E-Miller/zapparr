@@ -125,21 +125,29 @@ class GuideDeck(deck: View, private val store: GuideStore, private val openServe
             return
         }
         val program = cell.program
-        // The cell may be cut to the grid's start; the details give the program's own times.
-        val start = program?.start ?: cell.start
-        val end = program?.end ?: cell.end
-        val now = System.currentTimeMillis()
-        val parts = mutableListOf(
-            context.getString(R.string.guide_channel, channel.number, channel.name),
-            DateUtils.formatDateRange(context, start, end, DateUtils.FORMAT_SHOW_TIME),
-        )
-        if (now in start until end) {
-            val minutes = ((end - now + MINUTE - 1) / MINUTE).toInt()
-            parts += context.resources.getQuantityString(R.plurals.guide_minutes_left, minutes, minutes)
+        val parts = mutableListOf(context.getString(R.string.guide_channel, channel.number, channel.name))
+        // A gap has no times worth showing. A program has its own, which the cell may cut to the grid's start.
+        if (program != null) {
+            parts += timeRange(program.start, program.end)
+            val now = System.currentTimeMillis()
+            if (now in program.start until program.end) {
+                val minutes = ((program.end - now + MINUTE - 1) / MINUTE).toInt()
+                parts += context.resources.getQuantityString(R.plurals.guide_minutes_left, minutes, minutes)
+            }
         }
         title.text = program?.title ?: context.getString(R.string.guide_no_info)
         details.text = parts.joinToString(SEPARATOR)
         description.text = program?.description
+    }
+
+    // "11:30 PM – 12:30 AM", with the weekday for a program that isn't today. formatDateRange would
+    // spell out both dates for a program that crosses midnight.
+    private fun timeRange(start: Long, end: Long): String {
+        val from = DateUtils.formatDateTime(context, start, DateUtils.FORMAT_SHOW_TIME)
+        val to = DateUtils.formatDateTime(context, end, DateUtils.FORMAT_SHOW_TIME)
+        if (DateUtils.isToday(start)) return context.getString(R.string.guide_time_range, from, to)
+        val day = DateUtils.formatDateTime(context, start, DateUtils.FORMAT_SHOW_WEEKDAY or DateUtils.FORMAT_ABBREV_WEEKDAY)
+        return context.getString(R.string.guide_time_range_day, day, from, to)
     }
 
     private fun watch(channel: Channel) {

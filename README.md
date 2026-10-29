@@ -10,7 +10,8 @@ series sit side by side, with no ads and nothing deciding what you want to watch
 
 ## What it is
 
-Three decks, side by side. Left and Right on the remote move between them at the edge of a row.
+Three decks, side by side. Left and Right on the remote move between them at the edge of a row,
+or press Up to the tabs at the top, as on Google TV, and pick one.
 
 | Apps | Guide | Library |
 |---|---|---|
@@ -23,8 +24,8 @@ Three decks, side by side. Left and Right on the remote move between them at the
   at the current time. Filter by Favorites or by your Dispatcharr groups; hold OK on a channel to
   make it a favorite; OK watches it in the video player you pick (VLC, Just Player and the like)
   until Zapparr's own player arrives.
-- **Home always comes back.** Pressing Home returns to your first favorite; Back from the Guide or
-  Library returns to Apps; the gear opens the TV's Settings.
+- **Home always comes back.** Pressing Home returns to your first favorite; Back from the Guide,
+  the Library or the tabs returns to Apps; the gear beside the tabs opens the TV's Settings.
 - **A reversible debloat tool** for the onn 4K: switches off telemetry, ad services and preloads
   with `pm disable-user`, records every change first, and undoes it all with one command.
 

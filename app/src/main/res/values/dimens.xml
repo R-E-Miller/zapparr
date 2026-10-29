@@ -5,6 +5,11 @@
     <dimen name="safe_vertical">27dp</dimen>
     <dimen name="deck_top">32dp</dimen>
 
+    <!-- The top bar starts tab_padding early, so the first tab's text lines up with the decks. -->
+    <dimen name="tab_bar_start">44dp</dimen>
+    <dimen name="tab_padding">12dp</dimen>
+    <dimen name="tab_corner">20dp</dimen>
+
     <dimen name="tile_width">128dp</dimen>
     <dimen name="tile_height">72dp</dimen>
     <dimen name="tile_spacing">16dp</dimen>

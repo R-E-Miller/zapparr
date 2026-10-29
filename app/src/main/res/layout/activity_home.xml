@@ -13,10 +13,11 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="@dimen/safe_horizontal"
+        android:paddingStart="@dimen/tab_bar_start"
         android:paddingTop="@dimen/safe_vertical"
         android:paddingEnd="@dimen/safe_horizontal">
 
+        <!-- The tabs and the Settings button: Up from any deck reaches its tab. -->
         <TextView
             android:id="@+id/tab_apps"
             style="@style/Zapparr.Tab"

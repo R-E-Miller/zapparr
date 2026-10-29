@@ -13,7 +13,14 @@
     <style name="Zapparr.Tab">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginEnd">28dp</item>
+        <item name="android:layout_marginEnd">4dp</item>
+        <item name="android:background">@drawable/tab_background</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:paddingStart">@dimen/tab_padding</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingEnd">@dimen/tab_padding</item>
+        <item name="android:paddingBottom">6dp</item>
         <item name="android:textColor">@color/tab_text</item>
         <item name="android:textSize">20sp</item>
     </style>

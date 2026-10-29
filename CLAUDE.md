@@ -11,7 +11,8 @@ plan, the verified Dispatcharr and TvProvider facts, and the open questions.
 - `app/src/main/java/tv/zapparr/apps/`: app discovery (`AppRepository`), the Favorites rules and
   store, the Apps deck rows and tiles, launch helpers.
 - `app/src/main/java/tv/zapparr/live/`: Dispatcharr over the Xtream Codes API. `Server` (address
-  and login), `Xc` (URLs and JSON replies), `Xmltv` (streaming guide reader), `XcClient` (HTTP),
+  and login), `Xc` (URLs and JSON replies), `Xmltv` (streaming guide reader), `Vod` (movies and
+  series), `XcClient` (HTTP, streaming the big lists),
   `ServerActivity` (the connect screen). The Guide deck: `Guide` (cells, scrolling and filters,
   unit-tested), `GuideView` (the custom-drawn grid), `GuideDeck` (details, filters, favorite
   channels), `Logos`, `watch` (hands a stream to a video player).
