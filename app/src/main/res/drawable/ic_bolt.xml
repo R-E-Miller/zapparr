@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Zapparr's bolt, as in the app icon, tinted with the palette's accent where it's shown. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M13.1,1L2.1,14.2L10.9,14.2L9.8,23L21.9,8.7L13.1,8.7Z" />
+</vector>

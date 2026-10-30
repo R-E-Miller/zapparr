@@ -7,10 +7,13 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
+import android.widget.TextClock
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -20,7 +23,7 @@ import tv.zapparr.R
 import tv.zapparr.apps.AppRepository
 import tv.zapparr.apps.AppsDeck
 import tv.zapparr.apps.FavoritesStore
-import tv.zapparr.apps.openSettings
+import tv.zapparr.backup.Backups
 import tv.zapparr.library.LibraryDeck
 import tv.zapparr.library.LibraryStore
 import tv.zapparr.live.Catalog
@@ -32,6 +35,12 @@ import tv.zapparr.live.ServerKind
 import tv.zapparr.live.ServerStore
 import tv.zapparr.live.XcClient
 import tv.zapparr.live.describe
+import tv.zapparr.look.Look
+import tv.zapparr.look.LookStore
+import tv.zapparr.look.Option
+import tv.zapparr.look.SettingsActivity
+import tv.zapparr.look.applyLook
+import tv.zapparr.search.SearchActivity
 
 /** The home screen: a clock bar over three decks, Apps, Guide and Library. */
 class HomeActivity : ComponentActivity() {
@@ -47,6 +56,34 @@ class HomeActivity : ComponentActivity() {
     // changes or its content ages.
     private lateinit var guideFeed: ServerFeed<Lineup>
     private lateinit var libraryFeed: ServerFeed<Catalog>
+    private lateinit var guide: GuideDeck
+    private lateinit var library: LibraryDeck
+    private lateinit var rows: HomeRows
+    // The settings this screen was drawn with: when Settings changes them, Home is drawn again.
+    private lateinit var applied: Look
+    private var restored = Backups.generation
+
+    // A later program chosen in Search is shown in the Guide, at its time.
+    private val search = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val (channel, time) = SearchActivity.programOf(result) ?: return@registerForActivityResult
+        decks.show(Decks.GUIDE, takeFocus = true)
+        guide.showProgram(channel, time)
+    }
+
+    // Asked from Continue Watching's last card, never on its own: a prompt over Home would also
+    // stop debloat.py's set-home from seeing Home land on Zapparr.
+    private val allowWatchNext = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (!granted) rows.declined = true
+        rows.showContinueWatching()
+    }
+
+    // On now's programs and minutes left move on while Home is up.
+    private val tick = object : Runnable {
+        override fun run() {
+            rows.showOnNow()
+            decks.postDelayed(this, untilNextMinute())
+        }
+    }
 
     // Installs, updates, removals, and apps enabled or disabled (by the debloat tool too).
     private val packageChanges = object : BroadcastReceiver() {
@@ -54,6 +91,7 @@ class HomeActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        applied = applyLook()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
@@ -62,20 +100,28 @@ class HomeActivity : ComponentActivity() {
         decks = findViewById(R.id.decks)
         tabs = listOf(R.id.tab_apps, R.id.tab_guide, R.id.tab_library).map { findViewById(it) }
         decks.onDeckChanged = ::showTab
+        showClock()
         showTab(decks.current)
         bindTabs()
 
         findViewById<View>(R.id.settings).apply {
-            setOnClickListener { openSettings() }
+            setOnClickListener { startActivity(Intent(this@HomeActivity, SettingsActivity::class.java)) }
+            setOnKeyListener(downInto { decks.current })
+        }
+        findViewById<View>(R.id.search).apply {
+            setOnClickListener { openSearch() }
             setOnKeyListener(downInto { decks.current })
         }
 
-        val guide = GuideDeck(findViewById(R.id.deck_guide), GuideStore(this)) { ServerActivity.open(this, ServerKind.LIVE) }
+        val guideStore = GuideStore(this)
+        guide = GuideDeck(findViewById(R.id.deck_guide), guideStore) { ServerActivity.open(this, ServerKind.LIVE) }
+        rows = HomeRows(this, appsDeck, guide, guideStore) { allowWatchNext.launch(WatchNext.PERMISSION) }
+        guide.onChanged = rows::showOnNow
         guideFeed = ServerFeed(lifecycleScope, ServerStore(this, ServerKind.LIVE), guide, GUIDE_REFRESH, this::describe) { server ->
             val now = System.currentTimeMillis()
             XcClient(server).lineup(now - GUIDE_PAST, now + GUIDE_AHEAD)
         }
-        val library = LibraryDeck(findViewById(R.id.deck_library), LibraryStore(this)) { ServerActivity.open(this, ServerKind.LIBRARY) }
+        library = LibraryDeck(findViewById(R.id.deck_library), LibraryStore(this)) { ServerActivity.open(this, ServerKind.LIBRARY) }
         libraryFeed = ServerFeed(lifecycleScope, ServerStore(this, ServerKind.LIBRARY), library, LIBRARY_REFRESH, this::describe) { server ->
             XcClient(server).catalog()
         }
@@ -99,14 +145,34 @@ class HomeActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        if (LookStore(this).load() != applied || Backups.generation != restored) return recreate()
         guideFeed.refresh()
         libraryFeed.refresh()
+        // Back from a player or a details page: where things were left has changed.
+        rows.showContinueWatching()
+        rows.showOnNow()
+        decks.postDelayed(tick, untilNextMinute())
+    }
+
+    override fun onPause() {
+        decks.removeCallbacks(tick)
+        super.onPause()
     }
 
     override fun onDestroy() {
         unregisterReceiver(packageChanges)
         super.onDestroy()
     }
+
+    // The remote's Search key, where it has one, opens Search from anywhere on Home.
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        if (keyCode != KeyEvent.KEYCODE_SEARCH) return super.onKeyDown(keyCode, event)
+        openSearch()
+        return true
+    }
+
+    private fun openSearch() =
+        search.launch(SearchActivity.intent(this, guide.lineup, library.catalog, libraryFirst = decks.current == Decks.LIBRARY))
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -151,7 +217,23 @@ class HomeActivity : ComponentActivity() {
         tabs.forEachIndexed { i, tab -> tab.isActivated = i == index }
     }
 
+    // Settings > Clock and Date. As the TV is set, TextClock picks between its two formats itself.
+    private fun showClock() {
+        findViewById<View>(R.id.clock_date).isVisible = applied.on(Option.DATE)
+        val time = findViewById<TextClock>(R.id.clock_time)
+        val pattern = when (applied[Option.CLOCK]) {
+            "12" -> "h:mm"
+            "24" -> "HH:mm"
+            else -> return
+        }
+        time.format12Hour = pattern
+        time.format24Hour = pattern
+    }
+
+    private fun untilNextMinute() = MINUTE - System.currentTimeMillis() % MINUTE
+
     private companion object {
+        const val MINUTE = 60_000L
         const val GUIDE_PAST = 60 * 60 * 1000L
         const val GUIDE_AHEAD = 12 * 60 * 60 * 1000L
         const val GUIDE_REFRESH = 60 * 60 * 1000L

@@ -14,6 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import tv.zapparr.R
+import tv.zapparr.look.applyLook
+import tv.zapparr.look.themeColor
 
 /**
  * Where a server's address and login are entered: Dispatcharr's, or the library server's (see
@@ -31,6 +33,7 @@ class ServerActivity : ComponentActivity() {
     private var connecting = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        applyLook()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_server)
 
@@ -78,7 +81,7 @@ class ServerActivity : ComponentActivity() {
 
         connecting = true
         connect.isEnabled = false
-        status.setTextColor(getColor(R.color.text_secondary))
+        status.setTextColor(themeColor(R.attr.zTextDim))
         status.text = getString(R.string.server_connecting, base)
         lifecycleScope.launch {
             val problem = withContext(Dispatchers.IO) {

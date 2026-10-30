@@ -1,0 +1,58 @@
+# NVIDIA SHIELD TV (2015, 2017, the 2019 tube and the 2019 Pro), SHIELD Experience 9 on Android TV 11.
+#
+# match: manufacturer=NVIDIA
+#
+# `debloat.py plan` (with no list named) uses this list on top of android-tv.txt, which already has
+# Google's telemetry and preloaded apps. One package per line; everything after # is a comment.
+# Nothing is uninstalled: `python tools/debloat.py restore` re-enables all of it.
+#
+# Sources, cited next to each group:
+#   [CYT n/3]   CleanYourTV's tested SHIELD lists (MIT license, (c) 2026 Gathin), checked 2026-10-30:
+#               n of nvidia-shield-tv-2017, nvidia-shield-tv-2019 and nvidia-shield-tv-pro-2019.
+#               https://github.com/Gathin23/cleanyourtv/tree/main/examples
+#   [SHIELD]    bharvey88, debloating four SHIELDs across three generations over ADB:
+#               https://gist.github.com/bharvey88/c211c6ca1d9e5f1379b204bf75067275
+#
+# Never disabled here, as both sources say (debloat.py protects them): the remote and controller
+# pairing (com.nvidia.blakepairing, com.nvidia.bluetooth.*, com.nvidia.shieldtech.*,
+# com.nvidia.ControllerMapper, com.nvidia.remotelocator, com.nvidia.irtuner), the SHIELD TV phone app
+# (com.nvidia.shield.remote.server), AI upscaling, picture and sound (com.nvidia.NvCPLSvc,
+# com.nvidia.nvaudiosvc, com.nvidia.avsync, com.nvidia.overscancomp), com.nvidia.shieldservice,
+# com.nvidia.packagemanagerservice, keychain and com.android.se (soft-bricked units), and
+# com.google.android.tvrecommendations (the phone app's keys stop working after a reboot without it).
+#
+# probe and set-home show this on a SHIELD:
+# note: On the SHIELD the setup wizard doesn't answer Home, so set-home leaves it (and the Wi-Fi it may own) alone.
+#
+# Kept by default, but yours to decide. Remove the leading "# " to disable one:
+# com.nvidia.ota                       # firmware updates; NVIDIA still ships security patches [CYT 1/3]
+# com.nvidia.NvCPLUpdater              # with the above
+# com.nvidia.osc                       # NVIDIA's in-game overlay [CYT 1/3]
+# com.nvidia.shield.nas                # SHIELD as network storage; NVIDIA's Plex Media Server build uses
+# com.nvidia.shield.smbserver          # these three [CYT 1/3]
+# com.nvidia.shield.smbauth
+# com.android.gallery3d                # "Photos & Videos" [CYT 2/3; SHIELD]
+
+# NVIDIA telemetry and feedback [CYT 3/3; SHIELD]
+com.nvidia.stats                       # anonymous usage statistics
+com.nvidia.feedback                    # crash reports and the "send feedback" form
+com.nvidia.diagtools                   # log collector; re-enable it if NVIDIA support asks for logs
+
+# Registration, promotions and auto-installs [CYT 2/3, 2/3, 2/3, 3/3, 2/3, 2/3; SHIELD]
+com.nvidia.shield.registration         # product registration
+com.nvidia.shield.welcome              # first-run promotion
+com.nvidia.factorybundling             # accessory bundle offers
+android.autoinstalls.config.nvidia     # Play auto-installs of partner apps
+com.nvidia.shield.beta                 # beta programme
+com.nvidia.shieldbeta                  # beta programme
+
+# Factory and developer test tools, never used after the factory [CYT 2/3; SHIELD]
+com.nvidia.factory
+com.nvidia.factorysyschecker
+com.nvidia.tegraprofiler.security
+com.nvidia.developerwidget
+com.nvidia.inputviewer                 # input test viewer [CYT 2/3]; SHIELD left it on: opening it traps the remote
+
+# Gaming leftovers [CYT 2/3, 3/3; SHIELD]
+com.nvidia.nvgamecast                  # GameStream receiver; the service closed in 2023
+com.nvidia.tegrazone3                  # "NVIDIA Games" app and row; GeForce NOW is a separate app

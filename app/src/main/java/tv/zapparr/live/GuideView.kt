@@ -3,20 +3,24 @@ package tv.zapparr.live
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.RectF
 import android.text.TextPaint
 import android.text.TextUtils
-import android.text.format.DateFormat
 import android.util.AttributeSet
 import android.view.KeyEvent
 import android.view.View
-import androidx.core.content.ContextCompat
-import tv.zapparr.R
-import tv.zapparr.home.DeckPager
+import androidx.core.graphics.withClip
 import java.util.Date
 import kotlin.math.max
 import kotlin.math.min
+import tv.zapparr.R
+import tv.zapparr.home.DeckPager
+import tv.zapparr.look.Look
+import tv.zapparr.look.Option
+import tv.zapparr.look.themeColor
+import tv.zapparr.look.timeFormat
 
 /**
  * The Guide's time grid, drawn as one view: channels down the side, half hours across the top and
@@ -33,6 +37,25 @@ class GuideView @JvmOverloads constructor(
     var onSelected: ((Channel, Guide.Cell) -> Unit)? = null
     var onWatch: ((Channel) -> Unit)? = null
     var onHold: ((Channel) -> Unit)? = null
+
+    /**
+     * The channel being moved (its stream id), or null. While one is, Up and Down call [onMove]
+     * with -1 or +1, and OK or Back call [onMoveDone]; nothing else happens.
+     */
+    var moving: Int? = null
+        set(value) {
+            field = value
+            invalidate()
+        }
+    var onMove: ((Int) -> Unit)? = null
+    var onMoveDone: (() -> Unit)? = null
+
+    /** Stream ids of hidden channels shown anyway (Settings > Guide > Hidden channels), drawn dimmed. */
+    var hidden: Set<Int> = emptySet()
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     /** Stream ids of the favorite channels, marked beside their names. */
     var favorites: Set<Int> = emptySet()
@@ -57,7 +80,19 @@ class GuideView @JvmOverloads constructor(
     private var topRow = 0
     private var held = false
 
-    private val rowHeight = resources.getDimension(R.dimen.guide_row_height)
+    // Settings > Guide: row height, the channel numbers and logos, the now line, and the aired part shaded.
+    private val look = Look.current
+    private val rowHeight = resources.getDimension(
+        when (look[Option.GUIDE_ROWS]) {
+            "compact" -> R.dimen.guide_row_height_compact
+            "roomy" -> R.dimen.guide_row_height_roomy
+            else -> R.dimen.guide_row_height
+        },
+    )
+    private val showNumbers = look.on(Option.CHANNEL_NUMBERS)
+    private val showLogos = look.on(Option.CHANNEL_LOGOS)
+    private val fullNowLine = look[Option.NOW_LINE] == "full"
+    private val shadeAired = look.on(Option.PROGRAM_PROGRESS)
     private val headerHeight = resources.getDimension(R.dimen.guide_header_height)
     private val channelWidth = resources.getDimension(R.dimen.guide_channel_width)
     private val numberWidth = resources.getDimension(R.dimen.guide_number_width)
@@ -68,14 +103,15 @@ class GuideView @JvmOverloads constructor(
     private val corner = resources.getDimension(R.dimen.guide_corner)
     private val nowWidth = resources.getDimension(R.dimen.guide_now_width)
     private val markRadius = resources.getDimension(R.dimen.guide_mark_radius)
+    private val markerSize = resources.getDimension(R.dimen.guide_now_marker)
 
-    private val accent = ContextCompat.getColor(context, R.color.accent)
-    private val onAccent = ContextCompat.getColor(context, R.color.on_accent)
-    private val surface = ContextCompat.getColor(context, R.color.surface)
-    private val airing = ContextCompat.getColor(context, R.color.guide_airing)
-    private val textPrimary = ContextCompat.getColor(context, R.color.text_primary)
-    private val textSecondary = ContextCompat.getColor(context, R.color.text_secondary)
-    private val textTertiary = ContextCompat.getColor(context, R.color.text_tertiary)
+    private val accent = context.themeColor(R.attr.zAccent)
+    private val onAccent = context.themeColor(R.attr.zOnAccent)
+    private val surface = context.themeColor(R.attr.zSurface)
+    private val airing = context.themeColor(R.attr.zSurfaceHigh)
+    private val textPrimary = context.themeColor(R.attr.zText)
+    private val textSecondary = context.themeColor(R.attr.zTextDim)
+    private val textTertiary = context.themeColor(R.attr.zTextFaint)
 
     private val fill = Paint(Paint.ANTI_ALIAS_FLAG)
     private val outline = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -86,9 +122,10 @@ class GuideView @JvmOverloads constructor(
     private val titlePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = resources.getDimension(R.dimen.guide_title_text) }
     private val smallPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = resources.getDimension(R.dimen.guide_small_text) }
     private val bitmapPaint = Paint(Paint.FILTER_BITMAP_FLAG)
+    private val marker = Path()
     private val box = RectF()
     private val date = Date()
-    private val timeFormat = DateFormat.getTimeFormat(context)
+    private val timeFormat = context.timeFormat()
     private val noInfo = context.getString(R.string.guide_no_info)
     private val logos = Images(logoHeight.toInt(), LOGO_CACHE) { invalidate() }
 
@@ -129,6 +166,21 @@ class GuideView @JvmOverloads constructor(
         select(if (index >= 0) index else if (keepRow) min(row, max(0, channels.lastIndex)) else 0)
     }
 
+    /**
+     * Focuses the channel [streamId] at [time] (never before now), with that time's half hour at the
+     * grid's left edge and the channel at the top. False if the channel isn't shown.
+     */
+    fun focus(streamId: Int, time: Long): Boolean {
+        val index = channels.indexOfFirst { it.streamId == streamId }
+        if (index < 0) return false
+        val at = max(time, System.currentTimeMillis())
+        viewStart = max(origin, Guide.halfHour(at))
+        anchor = at
+        topRow = index
+        select(index)
+        return true
+    }
+
     override fun canMove(right: Boolean): Boolean {
         if (channels.isEmpty()) return false
         return if (right) cell < cellsOf(row).lastIndex else cell > 0
@@ -136,6 +188,14 @@ class GuideView @JvmOverloads constructor(
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (channels.isEmpty()) return super.onKeyDown(keyCode, event)
+        if (moving != null) {
+            when (keyCode) {
+                KeyEvent.KEYCODE_DPAD_UP -> onMove?.invoke(-1)
+                KeyEvent.KEYCODE_DPAD_DOWN -> onMove?.invoke(1)
+            }
+            // OK and Back put the channel down when they're let go; nothing else moves meanwhile.
+            return true
+        }
         return when (keyCode) {
             KeyEvent.KEYCODE_DPAD_UP -> moveTo(row - 1)
             KeyEvent.KEYCODE_DPAD_DOWN -> moveTo(row + 1)
@@ -156,13 +216,17 @@ class GuideView @JvmOverloads constructor(
     }
 
     override fun onKeyLongPress(keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode !in OK_KEYS || channels.isEmpty()) return super.onKeyLongPress(keyCode, event)
+        if (keyCode !in OK_KEYS || channels.isEmpty() || moving != null) return super.onKeyLongPress(keyCode, event)
         held = true
         onHold?.invoke(channels[row])
         return true
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+        if (moving != null && (keyCode in OK_KEYS || keyCode == KeyEvent.KEYCODE_BACK)) {
+            onMoveDone?.invoke()
+            return true
+        }
         if (keyCode !in OK_KEYS || channels.isEmpty()) return super.onKeyUp(keyCode, event)
         if (event.isTracking && !event.isCanceled && !held) onWatch?.invoke(channels[row])
         held = false
@@ -222,36 +286,61 @@ class GuideView @JvmOverloads constructor(
         if (now in viewStart until viewEnd) {
             fill.color = accent
             val x = x(now)
-            canvas.drawRect(x - nowWidth / 2, headerHeight - gap, x + nowWidth / 2, headerHeight + (last - topRow + 1) * rowHeight, fill)
+            marker.reset()
+            marker.moveTo(x - markerSize, headerHeight - markerSize - gap)
+            marker.lineTo(x + markerSize, headerHeight - markerSize - gap)
+            marker.lineTo(x, headerHeight - gap)
+            marker.close()
+            canvas.drawPath(marker, fill)
+            val bottom = if (fullNowLine) headerHeight + (last - topRow + 1) * rowHeight else headerHeight + gap
+            canvas.drawRect(x - nowWidth / 2, headerHeight - gap, x + nowWidth / 2, bottom, fill)
         }
     }
 
     private fun drawChannel(canvas: Canvas, index: Int, top: Float) {
         val channel = channels[index]
+        val dimmed = channel.streamId in hidden
         if (index == row) {
             fill.color = airing
             box.set(0f, top + gap / 2, channelWidth - gap, top + rowHeight - gap / 2)
             canvas.drawRoundRect(box, corner, corner, fill)
+            if (channel.streamId == moving) {
+                canvas.drawRoundRect(box, corner, corner, outline)
+                smallPaint.color = accent
+                canvas.drawText(MOVE_MARK, channelWidth - gap - padding - smallPaint.measureText(MOVE_MARK), baseline(smallPaint, top, rowHeight), smallPaint)
+            }
         }
-        smallPaint.color = textSecondary
-        val number = channel.number.toString()
-        canvas.drawText(number, numberWidth - smallPaint.measureText(number), baseline(smallPaint, top, rowHeight), smallPaint)
-        val logoLeft = numberWidth + padding
-        channel.logo?.let(logos::get)?.let { bitmap ->
-            val scale = min(logoWidth / bitmap.width, logoHeight / bitmap.height)
-            val w = bitmap.width * scale
-            val h = bitmap.height * scale
-            box.set(logoLeft + (logoWidth - w) / 2, top + (rowHeight - h) / 2, logoLeft + (logoWidth + w) / 2, top + (rowHeight + h) / 2)
-            canvas.drawBitmap(bitmap, null, box, bitmapPaint)
+        bitmapPaint.alpha = if (dimmed) DIMMED_ALPHA else 255
+        var left = padding
+        if (showNumbers) {
+            smallPaint.color = when {
+                dimmed -> textTertiary
+                index == row -> accent
+                else -> textSecondary
+            }
+            val number = channel.number.toString()
+            canvas.drawText(number, numberWidth - smallPaint.measureText(number), baseline(smallPaint, top, rowHeight), smallPaint)
+            left = numberWidth + padding
         }
-        var left = logoLeft + logoWidth + padding
+        if (showLogos) {
+            val logoLeft = left
+            channel.logo?.let(logos::get)?.let { bitmap ->
+                val scale = min(logoWidth / bitmap.width, logoHeight / bitmap.height)
+                val w = bitmap.width * scale
+                val h = bitmap.height * scale
+                box.set(logoLeft + (logoWidth - w) / 2, top + (rowHeight - h) / 2, logoLeft + (logoWidth + w) / 2, top + (rowHeight + h) / 2)
+                canvas.drawBitmap(bitmap, null, box, bitmapPaint)
+            }
+            left = logoLeft + logoWidth + padding
+        }
         if (channel.streamId in favorites) {
             fill.color = accent
             canvas.drawCircle(left + markRadius, top + rowHeight / 2, markRadius, fill)
             left += markRadius * 2 + padding / 2
         }
-        titlePaint.color = textPrimary
-        drawText(canvas, channel.name, left, channelWidth - gap - padding, top)
+        titlePaint.color = if (dimmed) textTertiary else textPrimary
+        val end = if (channel.streamId == moving) channelWidth - gap - padding * 2 - smallPaint.measureText(MOVE_MARK) else channelWidth - gap - padding
+        drawText(canvas, channel.name, left, end, top)
     }
 
     private fun drawCells(canvas: Canvas, index: Int, top: Float, now: Long) {
@@ -268,6 +357,12 @@ class GuideView @JvmOverloads constructor(
                 else -> surface
             }
             canvas.drawRoundRect(box, corner, corner, fill)
+            if (shadeAired && c.program != null && c.start <= now && now < c.end) {
+                fill.color = if (selected && isFocused) onAccent else textPrimary
+                fill.alpha = AIRED_ALPHA
+                canvas.withClip(left, box.top, min(x(now), right), box.bottom) { drawRoundRect(box, corner, corner, fill) }
+                fill.alpha = 255
+            }
             if (selected && !isFocused) canvas.drawRoundRect(box, corner, corner, outline)
             titlePaint.color = when {
                 selected && isFocused -> onAccent
@@ -351,6 +446,9 @@ class GuideView @JvmOverloads constructor(
 
     private companion object {
         const val TICK_MS = 30_000L
+        const val AIRED_ALPHA = 0x1C
+        const val DIMMED_ALPHA = 0x66
+        const val MOVE_MARK = "▲▼"
         const val LOGO_CACHE = 4 * 1024 * 1024
         val OK_KEYS = setOf(KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER)
     }

@@ -36,8 +36,11 @@ data class Series(
     val group: String?,
 ) : LibraryItem
 
-/** The Library deck's rows for movies or series: the newest, then each category that has any, in the server's order. */
-data class Library<out T>(val newest: List<T>, val shelves: List<Pair<Group, List<T>>>)
+/**
+ * The Library deck's rows for movies or series: the newest, then each category that has any, in the
+ * server's order. [all] holds every one, those in no known category too, for Search.
+ */
+data class Library<out T>(val newest: List<T>, val shelves: List<Pair<Group, List<T>>>, val all: List<T>)
 
 /** Everything the Library deck shows. */
 data class Catalog(val movies: Library<Movie>, val series: Library<Series>)
@@ -120,7 +123,7 @@ object Vod {
         val byGroup = items.groupBy(group)
         val shelves = groups.mapNotNull { g -> byGroup[g.id]?.let { g to it } }
         val newest = items.sortedWith(compareByDescending(added).thenByDescending(id)).take(NEWEST)
-        return Library(newest, shelves)
+        return Library(newest, shelves, items)
     }
 
     /** The details in a get_vod_info reply. */

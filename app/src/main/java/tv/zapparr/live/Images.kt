@@ -1,5 +1,6 @@
 package tv.zapparr.live
 
+import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Handler
@@ -7,6 +8,7 @@ import android.os.Looper
 import android.util.LruCache
 import android.widget.ImageView
 import androidx.core.graphics.scale
+import androidx.core.net.toUri
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -20,12 +22,14 @@ import java.util.concurrent.TimeUnit
  * Pictures from the network: channel logos and posters. Fetched on two background threads, newest
  * request first, scaled down to [height] pixels and kept in a memory cache of [cacheBytes].
  * [opaque] pictures (posters) are decoded at 16 bits a pixel, half the memory. [onLoaded] runs on
- * the main thread each time one arrives.
+ * the main thread each time one arrives. With a [resolver], other apps' pictures too (`content:`
+ * and `android.resource:` links, as in their Watch Next entries).
  */
 class Images(
     private val height: Int,
     cacheBytes: Int,
     private val opaque: Boolean = false,
+    private val resolver: ContentResolver? = null,
     private val onLoaded: () -> Unit = {},
 ) {
 
@@ -85,16 +89,12 @@ class Images(
     }
 
     private fun fetch(url: String): Bitmap? {
-        val connection = (URL(url).openConnection() as HttpURLConnection).apply {
-            connectTimeout = CONNECT_TIMEOUT
-            readTimeout = READ_TIMEOUT
-        }
-        val bytes = try {
-            if (connection.responseCode != HttpURLConnection.HTTP_OK) return null
-            connection.inputStream.use(::readCapped) ?: return null
-        } finally {
-            connection.disconnect()
-        }
+        val bytes = when {
+            url.startsWith("http://") || url.startsWith("https://") -> download(url)
+            // Not file: links, which could point into Zapparr's own files.
+            url.startsWith("content://") || url.startsWith("android.resource://") -> resolver?.openInputStream(url.toUri())?.use(::readCapped)
+            else -> null
+        } ?: return null
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
         if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null // not an image Android can decode, like SVG
@@ -108,6 +108,18 @@ class Images(
         if (decoded.height <= height) return decoded
         val width = maxOf(1, decoded.width * height / decoded.height)
         return decoded.scale(width, height).also { if (it !== decoded) decoded.recycle() }
+    }
+
+    private fun download(url: String): ByteArray? {
+        val connection = (URL(url).openConnection() as HttpURLConnection).apply {
+            connectTimeout = CONNECT_TIMEOUT
+            readTimeout = READ_TIMEOUT
+        }
+        return try {
+            if (connection.responseCode != HttpURLConnection.HTTP_OK) null else connection.inputStream.use(::readCapped)
+        } finally {
+            connection.disconnect()
+        }
     }
 
     // A logo or poster is small; anything bigger than MAX_BYTES is skipped rather than held in memory.

@@ -1,0 +1,29 @@
+# Google's own Google TV devices: Chromecast with Google TV 4K ("sabrina") and HD ("boreal"), and the
+# Google TV Streamer ("kirkwood").
+#
+# platform: google-tv
+# match: manufacturer=Google
+#
+# `debloat.py plan` (with no list named) uses this list on top of google-tv.txt, which already has the
+# telemetry, Privacy Sandbox (under these devices' com.google.android.* names) and preloaded apps.
+# One package per line; everything after # is a comment. Nothing is uninstalled:
+# `python tools/debloat.py restore` re-enables all of it.
+#
+# Sources: CleanYourTV's tested lists for these three devices (MIT license, (c) 2026 Gathin), checked
+# 2026-10-30, and its docs/TROUBLESHOOTING.md:
+#   https://github.com/Gathin23/cleanyourtv/tree/main/examples/google-chromecast-gtv-4k
+#   https://github.com/Gathin23/cleanyourtv/tree/main/examples/google-chromecast-gtv-hd
+#   https://github.com/Gathin23/cleanyourtv/tree/main/examples/google-tv-streamer-4k-kirkwood
+# and rcland12/debloat-tv's packages-chromecast.txt (Chromecast with Google TV 4K, Android 14):
+#   https://github.com/rcland12/debloat-tv
+#
+# probe and set-home show these on Google's devices:
+# note: Casting from a phone stops working ("Untrusted device") once set-home disables the setup wizard: the Cast receiver reads its device credentials from it. restore brings casting back.
+# note: The remote's YouTube button does nothing once the stock launcher is disabled.
+# note: Android 14 opens network ADB only after pairing once under Developer options > Wireless debugging.
+#
+# Kept by default, but yours to decide. Remove the leading "# " to disable one:
+# com.google.android.backdrop                   # older ambient-mode screensaver [CYT: 2 of 3 lists]
+
+# Network diagnostics reporting (the 4K) [CYT google-chromecast-gtv-4k]
+com.google.android.apps.tv.netoscope

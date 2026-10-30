@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Darkens the backdrop from the left, where the text is, so it stays readable over any picture. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:angle="0"
+        android:centerColor="?attr/zScrimMid"
+        android:centerX="0.55"
+        android:endColor="?attr/zScrimLight"
+        android:startColor="?attr/zScrimStrong" />
+</shape>

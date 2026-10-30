@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fades the Library's backdrop into the page: from the left, toward the rows below, and at the top. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="0"
+                android:centerColor="?attr/zScrimLight"
+                android:centerX="0.35"
+                android:endColor="@android:color/transparent"
+                android:startColor="?attr/zBackground" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="90"
+                android:centerColor="?attr/zScrimLight"
+                android:centerY="0.4"
+                android:endColor="@android:color/transparent"
+                android:startColor="?attr/zBackground" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:centerColor="@android:color/transparent"
+                android:centerY="0.3"
+                android:endColor="@android:color/transparent"
+                android:startColor="?attr/zBackground" />
+        </shape>
+    </item>
+</layer-list>

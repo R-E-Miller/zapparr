@@ -10,6 +10,13 @@
 
     <!-- The Dispatcharr server. -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Other apps' Watch Next entries, for Continue Watching. Asked for only from its own card. -->
+    <uses-permission android:name="android.permission.READ_TV_LISTINGS" />
+    <!-- Backups Zapparr didn't save itself (before it was installed again), on Android 10 to 12.
+         Asked for only from Backup and restore. -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <!-- Lets the Apps deck see every app the TV can launch (Android 11+ package visibility). -->
     <queries>
@@ -20,6 +27,12 @@
         <intent>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <!-- TvProvider, which holds the Watch Next entries. -->
+        <provider android:authorities="android.media.tv" />
+        <!-- Speech recognition, for Search's mic. -->
+        <intent>
+            <action android:name="android.speech.action.RECOGNIZE_SPEECH" />
         </intent>
     </queries>
 
@@ -54,6 +67,27 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".library.DetailsActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+            android:exported="false" />
+        <activity
+            android:name=".backup.BackupActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+            android:exported="false" />
+        <activity
+            android:name=".look.SettingsActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+            android:exported="false" />
+        <activity
+            android:name=".look.PalettesActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+            android:exported="false" />
+        <activity
+            android:name=".search.SearchActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+            android:exported="false"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name=".live.ServerActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"

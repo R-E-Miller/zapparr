@@ -63,7 +63,8 @@ class Handler(BaseHTTPRequestHandler):
         for prefix, (width, height) in sizes.items():
             if url.path.startswith(prefix) and url.path.endswith(".png") and url.path[len(prefix):-4].isdigit():
                 seed = int(url.path[len(prefix):-4])
-                return self.reply(200, "image/png", picture(GROUP_COLORS[seed % len(GROUP_COLORS)], seed, width, height))
+                return self.reply(200, "image/png", picture(GROUP_COLORS[seed % len(GROUP_COLORS)], seed, width, height,
+                                                            marked=prefix != "/backdrops/"))
         if url.path != "/player_api.php":
             return self.reply(404, "text/plain", "not found")
         q = {k: v[0] for k, v in parse_qs(url.query).items()}

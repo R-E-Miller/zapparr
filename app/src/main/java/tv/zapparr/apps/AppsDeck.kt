@@ -5,17 +5,35 @@ import android.view.View
 import android.widget.PopupMenu
 import androidx.leanback.widget.VerticalGridView
 import tv.zapparr.R
+import tv.zapparr.live.Images
+import tv.zapparr.look.Look
+import tv.zapparr.look.Option
 
-/** The Apps deck: a Favorites row on top, then every launchable app, six to a row. */
+/**
+ * The Apps deck: a Favorites row on top, then Continue Watching and On now while they have
+ * anything to show, then every launchable app, six to a row.
+ */
 class AppsDeck(private val rows: VerticalGridView, private val store: FavoritesStore) {
 
     private val context: Context get() = rows.context
     private var apps: List<AppEntry> = emptyList()
     private var favorites: List<String> = emptyList()
-    private val adapter = RowsAdapter(onOpen = { context.openApp(it) }, onMenu = ::showMenu)
+    private var continuing: List<Card> = emptyList()
+    private var onNow: List<Card> = emptyList()
+    private val adapter = run {
+        val height = context.resources.getDimensionPixelSize(R.dimen.card_height)
+        val resolver = context.applicationContext.contentResolver
+        RowsAdapter(
+            onOpen = { context.openApp(it) },
+            onMenu = ::showMenu,
+            pictures = Images(height, PICTURE_CACHE, opaque = true, resolver = resolver),
+            logos = Images(height, LOGO_CACHE, resolver = resolver),
+        )
+    }
 
     init {
         rows.adapter = adapter
+        if (Look.current[Option.HOME_SPACING] == "compact") rows.verticalSpacing = context.resources.getDimensionPixelSize(R.dimen.row_spacing_compact)
     }
 
     fun submit(installed: List<AppEntry>) {
@@ -24,9 +42,19 @@ class AppsDeck(private val rows: VerticalGridView, private val store: FavoritesS
         rebuild()
     }
 
+    internal fun showContinueWatching(cards: List<Card>) {
+        continuing = cards
+        rebuild()
+    }
+
+    internal fun showOnNow(cards: List<Card>) {
+        onNow = cards
+        rebuild()
+    }
+
     /** Focuses the first favorite, or the first app when there are none, as Home does. */
     fun focusFirst() {
-        val row = if (favorites.isEmpty()) FIRST_APPS_ROW else FAVORITES_ROW
+        val row = if (favorites.isEmpty()) firstAppsRow() else FAVORITES_ROW
         if (row >= adapter.itemCount) return
         adapter.selectTile(rows, row, 0)
         rows.selectedPosition = row
@@ -35,19 +63,24 @@ class AppsDeck(private val rows: VerticalGridView, private val store: FavoritesS
 
     private fun rebuild() {
         val byPackage = apps.associateBy { it.packageName }
-        // Favorites always comes first, even when empty, so the rows below never change index.
-        val list = mutableListOf(
+        // Favorites always comes first, even when empty, so it never changes index.
+        val list = mutableListOf<DeckRow>(
             TileRow(
+                id = "favorites",
                 title = context.getString(R.string.favorites),
                 apps = favorites.mapNotNull { byPackage[it] },
                 hint = context.getString(R.string.favorites_hint),
             ),
         )
+        if (continuing.isNotEmpty()) list += CardRow("continue", context.getString(R.string.continue_watching), continuing)
+        if (onNow.isNotEmpty()) list += CardRow("on_now", context.getString(R.string.on_now), onNow)
         apps.chunked(COLUMNS).forEachIndexed { i, chunk ->
-            list += TileRow(title = if (i == 0) context.getString(R.string.all_apps) else null, apps = chunk)
+            list += TileRow(id = "apps:$i", title = if (i == 0) context.getString(R.string.all_apps) else null, apps = chunk)
         }
         adapter.submit(list)
     }
+
+    private fun firstAppsRow() = FAVORITES_ROW + 1 + (if (continuing.isEmpty()) 0 else 1) + (if (onNow.isEmpty()) 0 else 1)
 
     private fun showMenu(app: AppEntry, anchor: View) {
         val index = favorites.indexOf(app.packageName)
@@ -87,7 +120,9 @@ class AppsDeck(private val rows: VerticalGridView, private val store: FavoritesS
     private companion object {
         const val COLUMNS = 6
         const val FAVORITES_ROW = 0
-        const val FIRST_APPS_ROW = 1
+        // Pictures at 16 bits a pixel: about fifty cards' worth. Logos are small.
+        const val PICTURE_CACHE = 8 * 1024 * 1024
+        const val LOGO_CACHE = 2 * 1024 * 1024
 
         const val ADD = 1
         const val REMOVE = 2

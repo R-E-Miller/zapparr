@@ -6,11 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.leanback.widget.HorizontalGridView
 import androidx.recyclerview.widget.RecyclerView
 import tv.zapparr.R
+import tv.zapparr.apps.showLift
 import tv.zapparr.live.Images
 import tv.zapparr.live.LibraryItem
+import tv.zapparr.look.Look
+import tv.zapparr.look.Option
 
 /** One row of the Library deck: Recently added, or a category. */
 internal class PosterRow(val title: String, val items: List<LibraryItem>)
@@ -18,6 +22,7 @@ internal class PosterRow(val title: String, val items: List<LibraryItem>)
 internal class PosterRowsAdapter(
     private val images: Images,
     private val onOpen: (LibraryItem) -> Unit,
+    private val onFocus: (LibraryItem) -> Unit,
 ) : RecyclerView.Adapter<PosterRowsAdapter.RowHolder>() {
 
     private var rows: List<PosterRow> = emptyList()
@@ -41,7 +46,7 @@ internal class PosterRowsAdapter(
     inner class RowHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val title: TextView = view.findViewById(R.id.row_title)
         private val posters: HorizontalGridView = view.findViewById(R.id.row_posters)
-        private val adapter = PostersAdapter(images, onOpen)
+        private val adapter = PostersAdapter(images, onOpen, onFocus)
 
         init {
             posters.setRecycledViewPool(tilePool)
@@ -59,6 +64,7 @@ internal class PosterRowsAdapter(
 internal class PostersAdapter(
     private val images: Images,
     private val onOpen: (LibraryItem) -> Unit,
+    private val onFocus: (LibraryItem) -> Unit,
 ) : RecyclerView.Adapter<PostersAdapter.PosterHolder>() {
 
     private var items: List<LibraryItem> = emptyList()
@@ -85,46 +91,34 @@ internal class PostersAdapter(
         private val card: View = view.findViewById(R.id.poster_card)
         private val image: ImageView = view.findViewById(R.id.poster_image)
         private val name: TextView = view.findViewById(R.id.poster_name)
-        private val caption: TextView = view.findViewById(R.id.poster_caption)
+        private val title: TextView = view.findViewById(R.id.poster_title)
         private val lift = view.resources.getDimension(R.dimen.tile_lift)
         private var item: LibraryItem? = null
 
         init {
             card.clipToOutline = true
             view.setOnClickListener { item?.let(onOpen) }
-            view.setOnFocusChangeListener { _, hasFocus -> showFocus(hasFocus, animate = true) }
+            view.setOnFocusChangeListener { _, hasFocus ->
+                showFocus(hasFocus, animate = true)
+                if (hasFocus) item?.let(onFocus)
+            }
         }
 
         fun bind(entry: LibraryItem) {
             item = entry
             images.show(entry.poster, image)
             name.text = entry.name
-            caption.text = entry.name
+            title.text = entry.name
+            title.isVisible = Look.current.on(Option.POSTER_TITLES)
             itemView.contentDescription = entry.name
             showFocus(itemView.isFocused, animate = false)
         }
 
-        // The focused poster lifts and shows its name underneath, like an app tile.
-        private fun showFocus(focused: Boolean, animate: Boolean) {
-            val scale = if (focused) FOCUS_SCALE else 1f
-            val z = if (focused) lift else 0f
-            val alpha = if (focused) 1f else 0f
-            if (animate) {
-                card.animate().scaleX(scale).scaleY(scale).translationZ(z).setDuration(FOCUS_MS).start()
-                caption.animate().alpha(alpha).setDuration(FOCUS_MS).start()
-            } else {
-                card.animate().cancel()
-                caption.animate().cancel()
-                card.scaleX = scale
-                card.scaleY = scale
-                card.translationZ = z
-                caption.alpha = alpha
-            }
-        }
+        // The focused poster lifts; its name shows in full above the rows.
+        private fun showFocus(focused: Boolean, animate: Boolean) = showLift(card, focused, animate, FOCUS_SCALE, lift)
     }
 
     private companion object {
         const val FOCUS_SCALE = 1.08f
-        const val FOCUS_MS = 150L
     }
 }

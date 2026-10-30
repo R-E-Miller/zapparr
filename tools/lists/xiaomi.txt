@@ -1,0 +1,43 @@
+# Xiaomi: Mi Box S (MIBOX4) and Mi Box 3, Mi TV Stick (MiTV-AESP0), Xiaomi TV Box S 2nd and 3rd gen
+# (MiTV-AFKR0, MiTV-AFMU0), and Xiaomi and Redmi TVs with Android TV or Google TV.
+#
+# match: manufacturer=Xiaomi
+# match: brand=Xiaomi
+# match: brand=Redmi
+#
+# `debloat.py plan` (with no list named) uses this list on top of the generic list for the platform.
+# One package per line; everything after # is a comment. Nothing is uninstalled:
+# `python tools/debloat.py restore` re-enables all of it.
+#
+# Source: CleanYourTV's 37 tested Xiaomi and Redmi lists (examples/xiaomi-*, redmi-*; MIT license,
+# (c) 2026 Gathin), checked 2026-10-30, cited as [CYT n/37]: https://github.com/Gathin23/cleanyourtv
+#
+# Never disabled here (debloat.py protects them): com.xiaomi.android.tvsetup.partnercustomizer (it
+# receives the remote's shortcut buttons and runs remote pairing), mitv.service (Xiaomi's TvServer),
+# com.droidlogic.* and com.mediatek.* (the chip vendor's HDMI, inputs and Bluetooth).
+#
+# probe and set-home show these on a Xiaomi box:
+# note: Xiaomi's update service can install PatchWall again minutes after it is disabled. Run apply again if it comes back; disabling com.xiaomi.mitv.updateservice (below) stops it, and firmware updates with it.
+# note: On Google TV models the setup wizard also pairs the remote: run restore before pairing a new remote.
+# note: China-market Xiaomi firmware only accepts its own launchers as Home, so set-home undoes itself there.
+#
+# Kept by default, but yours to decide. Remove the leading "# " to disable one:
+# com.xiaomi.mitv.updateservice        # firmware and PatchWall updates
+# com.mitv.milinkservice               # Mi Cast receiver
+# com.mitv.videoplayer                 # Mi video player, which Mi Cast uses
+
+# Usage tracking [CYT 36/37, 29/37, 3/37]
+com.miui.tv.analytics                  # Mi analytics: reads logs and app usage
+com.xiaomi.statistic                   # Xiaomi usage statistics uploader
+tv.alphonso.alphonso_eula              # Alphonso ad tracking: recognises what's on screen
+
+# PatchWall, its content rows and promotions [CYT 26/37, 21/37, 18/37, 8/37, 36/37]
+com.mitv.tvhome.atv                    # PatchWall; the remote's PatchWall button does nothing without it
+com.mitv.tvhome.michannel              # Mi Channel rows
+com.mitv.tvhome.mitvplus               # Mi TV+ ad-funded channels
+com.mitv.tvhome.oemtab                 # Xiaomi ad row
+com.xm.webcontent                      # web promotions, screensaver ads
+
+# Cleaner and auto-installs [CYT 25/37, 5/37]
+com.xiaomi.mitv.tvmanager              # "TV Manager" cleaner, which slows a TV down
+android.autoinstalls.config.xioami.mibox3  # Play auto-installs of partner apps (Xiaomi's spelling)

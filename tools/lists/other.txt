@@ -1,0 +1,24 @@
+# Unknown boxes: neither Google TV's nor Android TV's launcher is installed (an AOSP build with its own
+# launcher, an operator box, a projector, Fire OS).
+#
+# platform: other
+#
+# `debloat.py plan` (with no list named) uses this list when `debloat.py probe` can't tell what the box
+# is, together with any vendor or model list whose "match:" line fits. It is short on purpose: only
+# Google's telemetry and the print spooler, which behave the same on every box that has them. On a box
+# nobody has tested, a missing entry is better than a broken box. Add what you are sure of to a list of
+# your own (see the "match:" lines in the vendor lists), and read `plan` before `apply`.
+#
+# One package per line; everything after # is a comment. Packages that aren't installed are skipped,
+# and nothing is uninstalled: `python tools/debloat.py restore` re-enables all of it.
+#
+# Source: CleanYourTV's tested per-device lists (examples/<model>/debloat.txt, MIT license, (c) 2026
+# Gathin), checked 2026-10-30: https://github.com/Gathin23/cleanyourtv
+
+# Telemetry and feedback [CYT: 116 of 129 Google TV, 155 of 189 Android TV and 6 of 37 other lists]
+com.google.android.feedback
+com.android.tv.feedbackconsent
+com.google.android.tv.bugreportsender           # [CYT: 53 of 189 Android TV lists]
+
+# Printing, which no TV uses [CYT: 33 of 129 Google TV, 59 of 189 Android TV and 8 of 37 other lists]
+com.android.printspooler

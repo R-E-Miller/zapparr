@@ -1,0 +1,32 @@
+# Philips sets by TP Vision with Android TV or Google TV (the org.droidtv.* firmware). Philips sets
+# built by other makers report their own maker and have different packages; the ones here are skipped
+# there as not installed.
+#
+# match: brand=Philips*
+# match: manufacturer=TPV*
+# match: manufacturer=TP?Vision*
+#
+# `debloat.py plan` (with no list named) uses this list on top of the generic list for the platform.
+# One package per line; everything after # is a comment. Nothing is uninstalled:
+# `python tools/debloat.py restore` re-enables all of it.
+#
+# Source: CleanYourTV's 21 tested Philips lists (examples/philips-*; MIT license, (c) 2026 Gathin),
+# checked 2026-10-30, cited as [CYT n/21]: https://github.com/Gathin23/cleanyourtv
+#
+# Never disabled here (debloat.py protects them, from CYT philips-50pus8517's DO NOT DISABLE list):
+# the tuner, channels and inputs (org.droidtv.xtv, xtvsystem, playtv, channels, hdmiservice,
+# tv.tptvservice, icp, fastip), org.droidtv.eum (the SOURCES drawer dies without it), the remote and
+# front-panel keys (org.droidtv.GlobalKey, lkb), the OPTIONS menu (philipstvdrawer), Settings and
+# power management, setup and network wizards, remote firmware updates (com.easy.oad), all com.mediatek.*.
+# Left out: org.droidtv.usagelogger and org.droidtv.demome, which ask for the TV-input permission on
+# some firmware (CYT: 12/21 and 11/21 lists disable them; its own tool refuses them there).
+
+# Analytics [CYT 16/21]
+org.droidtv.candeebug                  # "DAC" analytics uploader
+org.droidtv.gel                        # metrics collector, runs in candeebug's process
+
+# Promotions and the app gallery [CYT 12/21, 9/21, 12/21, 4/21]
+org.droidtv.nettvrecommender           # "Top Picks" row (disabled before the next line, as CYT advises)
+org.droidtv.recommendation             # its background service
+org.droidtv.nettv.market               # app gallery storefront; the Play Store stays
+tv.samba.ssm                           # Samba TV: recognises what's on screen for ad targeting

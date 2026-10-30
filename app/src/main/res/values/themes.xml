@@ -1,10 +1,32 @@
 <resources>
+    <!-- Zapparr's own palette. Each screen lays the palette chosen in Settings over it (Palette.*
+         in palettes.xml), and the Look.* overlays below for the options that change drawing. -->
     <style name="Theme.Zapparr" parent="android:Theme.Material.NoActionBar">
-        <item name="android:colorAccent">@color/accent</item>
-        <item name="android:colorBackground">@color/background</item>
-        <item name="android:windowBackground">@color/background</item>
-        <item name="android:textColorPrimary">@color/text_primary</item>
-        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="zBackground">@color/background</item>
+        <item name="zBackgroundGlow">#FF1B2230</item>
+        <item name="zSurface">@color/surface</item>
+        <item name="zSurfaceHigh">@color/guide_airing</item>
+        <item name="zAccent">@color/accent</item>
+        <item name="zOnAccent">@color/on_accent</item>
+        <item name="zText">@color/text_primary</item>
+        <item name="zTextDim">@color/text_secondary</item>
+        <item name="zTextFaint">@color/text_tertiary</item>
+        <item name="zScrimStrong">#F20B0E13</item>
+        <item name="zScrimMid">#CC0B0E13</item>
+        <item name="zScrimLight">#550B0E13</item>
+        <item name="android:colorAccent">?attr/zAccent</item>
+        <item name="android:colorBackground">?attr/zBackground</item>
+        <item name="android:windowBackground">@drawable/window_background</item>
+        <item name="android:textColorPrimary">?attr/zText</item>
+        <item name="android:textColorSecondary">?attr/zTextDim</item>
+    </style>
+
+    <!-- Parent of the Look.* overlays: the settings that change how a screen's theme draws. -->
+    <style name="Look" />
+
+    <!-- Settings > Background: Solid, instead of the glow from the top-left corner. -->
+    <style name="Look.SolidBackground">
+        <item name="android:windowBackground">?attr/zBackground</item>
     </style>
 
     <!-- Parent of the Zapparr.* styles below. -->
@@ -37,7 +59,7 @@
     <style name="Zapparr.PlaceholderTitle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColor">?attr/zText</item>
         <item name="android:textSize">34sp</item>
     </style>
 
@@ -46,7 +68,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">12dp</item>
         <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textColor">?attr/zTextDim</item>
         <item name="android:textSize">@dimen/body_text</item>
     </style>
 
@@ -92,7 +114,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">14dp</item>
         <item name="android:layout_marginBottom">6dp</item>
-        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textColor">?attr/zTextDim</item>
         <item name="android:textSize">14sp</item>
     </style>
 
@@ -104,8 +126,8 @@
         <item name="android:paddingStart">16dp</item>
         <item name="android:paddingEnd">16dp</item>
         <item name="android:singleLine">true</item>
-        <item name="android:textColor">@color/text_primary</item>
-        <item name="android:textColorHint">@color/text_tertiary</item>
+        <item name="android:textColor">?attr/zText</item>
+        <item name="android:textColorHint">?attr/zTextFaint</item>
         <item name="android:textSize">@dimen/body_text</item>
     </style>
 </resources>

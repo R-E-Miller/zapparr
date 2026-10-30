@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The theme's window background paints the screen once. Clip nothing on the way down:
-     focused tiles scale up past their rows. -->
+<!-- The theme's window background paints the screen once. The decks are clipped at the top bar, so
+     rows scrolling up pass under it, not over it. Inside them nothing is clipped: focused tiles
+     scale up past their rows. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipChildren="false"
     android:orientation="vertical">
 
     <LinearLayout
@@ -13,25 +13,56 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="@dimen/tab_bar_start"
+        android:paddingStart="@dimen/safe_horizontal"
         android:paddingTop="@dimen/safe_vertical"
         android:paddingEnd="@dimen/safe_horizontal">
 
-        <!-- The tabs and the Settings button: Up from any deck reaches its tab. -->
-        <TextView
-            android:id="@+id/tab_apps"
-            style="@style/Zapparr.Tab"
-            android:text="@string/deck_apps" />
+        <!-- Zapparr's bolt, in the palette's accent. -->
+        <ImageView
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginEnd="16dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_bolt"
+            android:tint="?attr/zAccent" />
 
-        <TextView
-            android:id="@+id/tab_guide"
-            style="@style/Zapparr.Tab"
-            android:text="@string/deck_guide" />
+        <!-- Search, as on Google TV, left of the tabs. -->
+        <ImageButton
+            android:id="@+id/search"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/round_button"
+            android:contentDescription="@string/search"
+            android:focusableInTouchMode="true"
+            android:scaleType="center"
+            android:src="@drawable/ic_search"
+            android:tint="@color/icon_tint" />
 
-        <TextView
-            android:id="@+id/tab_library"
-            style="@style/Zapparr.Tab"
-            android:text="@string/deck_library" />
+        <!-- The tabs, together in one pill as on Google TV: Up from any deck reaches its tab. -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tab_bar_background"
+            android:orientation="horizontal"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/tab_apps"
+                style="@style/Zapparr.Tab"
+                android:text="@string/deck_apps" />
+
+            <TextView
+                android:id="@+id/tab_guide"
+                style="@style/Zapparr.Tab"
+                android:text="@string/deck_guide" />
+
+            <TextView
+                android:id="@+id/tab_library"
+                style="@style/Zapparr.Tab"
+                android:layout_marginEnd="0dp"
+                android:text="@string/deck_library" />
+        </LinearLayout>
 
         <Space
             android:layout_width="0dp"
@@ -39,21 +70,23 @@
             android:layout_weight="1" />
 
         <TextClock
+            android:id="@+id/clock_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:format12Hour="EEE, MMM d"
             android:format24Hour="EEE, d MMM"
-            android:textColor="@color/text_secondary"
+            android:textColor="?attr/zTextDim"
             android:textSize="18sp" />
 
         <TextClock
+            android:id="@+id/clock_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-light"
             android:format12Hour="h:mm"
             android:format24Hour="HH:mm"
-            android:textColor="@color/text_primary"
+            android:textColor="?attr/zText"
             android:textSize="30sp" />
 
         <ImageButton
@@ -141,21 +174,21 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:textColor="@color/text_primary"
+                    android:textColor="?attr/zText"
                     android:textSize="24sp" />
 
                 <TextView
                     android:id="@+id/guide_program_details"
                     style="@style/Zapparr.GuideDetail"
                     android:singleLine="true"
-                    android:textColor="@color/text_secondary" />
+                    android:textColor="?attr/zTextDim" />
 
                 <TextView
                     android:id="@+id/guide_program_description"
                     style="@style/Zapparr.GuideDetail"
                     android:ellipsize="end"
                     android:lines="2"
-                    android:textColor="@color/text_tertiary" />
+                    android:textColor="?attr/zTextFaint" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -199,6 +232,29 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipChildren="false">
+
+            <!-- Settings > Backdrop: the focused poster shrunk to a few pixels and spread out, so only
+                 its colors show, fading into the page to the left and below. -->
+            <FrameLayout
+                android:id="@+id/library_backdrop_box"
+                android:layout_width="@dimen/library_backdrop_width"
+                android:layout_height="@dimen/library_backdrop_height"
+                android:layout_gravity="top|end"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/library_backdrop"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.5"
+                    android:importantForAccessibility="no"
+                    android:scaleType="centerCrop" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/backdrop_scrim" />
+            </FrameLayout>
 
             <!-- Until the library loads: a message, and a button to the library server screen. -->
             <LinearLayout
@@ -257,6 +313,30 @@
                         android:layout_marginEnd="0dp"
                         android:text="@string/library_server_settings" />
                 </LinearLayout>
+
+                <!-- The focused poster's name in full, and its year, rating and genre. -->
+                <TextView
+                    android:id="@+id/library_focus_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:ellipsize="end"
+                    android:paddingStart="@dimen/safe_horizontal"
+                    android:paddingEnd="@dimen/safe_horizontal"
+                    android:singleLine="true"
+                    android:textColor="?attr/zText"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/library_focus_meta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:paddingStart="@dimen/safe_horizontal"
+                    android:paddingEnd="@dimen/safe_horizontal"
+                    android:singleLine="true"
+                    android:textColor="?attr/zTextDim"
+                    android:textSize="@dimen/guide_detail_text" />
 
                 <androidx.leanback.widget.VerticalGridView
                     android:id="@+id/library_rows"

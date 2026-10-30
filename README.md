@@ -4,9 +4,12 @@ The set-top "launcharr" for Android TV: a lean home screen that works like a cab
 live TV guide from [Dispatcharr](https://github.com/Dispatcharr/Dispatcharr), and your movies and
 series sit side by side, with no ads and nothing deciding what you want to watch.
 
-> **Status: early development (Phase 2 under way).** The home screen, the app rows, the debloat
-> tool, the live TV guide and the Library's poster rows work; OK on a channel or a movie hands it
-> to your video player. Details pages, series episodes and resume come next.
+> **Status: early development (Phase 2's four steps built; Phase 3 next).** The home screen, the
+> debloat tool, the live TV guide and the Library work, and the Apps deck has Continue Watching
+> (what you left part-way, in the Library and in other apps) and On now (your recent channels with
+> what's airing). Search finds channels, programs, movies and series in one place. The gear opens
+> Zapparr's own settings: 22 color themes, a 12 or 24-hour clock, and how each screen looks.
+> Streams go to your video player until Phase 3's built-in player.
 
 ## What it is
 
@@ -82,9 +85,11 @@ so a newer APK always installs over an older one.
 
 1. **Foundation** *(done)*: TV launcher with Home and Leanback intents, the three-deck skeleton,
    app discovery and the Favorites row, the onn debloat tool.
-2. **Dispatcharr and VOD**: the Xtream Codes API from Dispatcharr (channels, EPG, movies, series)
-   with M3U and XMLTV as a fallback; the time-grid guide; the VOD poster grid; a Continue Watching
-   row from the TV's Watch Next data; handing streams to an external player.
+2. **Dispatcharr and VOD** *(built)*: live TV from Dispatcharr's Xtream Codes API, movies and
+   series from your library server's (vod-organizer); the time-grid guide; the Library's poster
+   rows, details and resume; Continue Watching (with the TV's Watch Next data) and On now on the
+   Apps deck; handing streams to an external player. Not built: M3U and XMLTV as a fallback for
+   servers without the Xtream Codes API.
 3. **Built-in player**: Media3 (ExoPlayer), a mini-guide over live video, channel-number entry,
    last-channel recall, and live TV that keeps playing behind the guide.
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The focused episode is filled with the accent, like a focused button. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="?attr/zAccent" />
+            <corners android:radius="@dimen/corner" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#B31A1F27" />
+            <corners android:radius="@dimen/corner" />
+        </shape>
+    </item>
+</selector>

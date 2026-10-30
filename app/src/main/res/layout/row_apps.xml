@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:textColor="@color/text_secondary"
+        android:textColor="?attr/zTextDim"
         android:textSize="@dimen/row_title_text" />
 
     <TextView
@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/tile_height"
         android:gravity="center_vertical"
-        android:textColor="@color/text_tertiary"
+        android:textColor="?attr/zTextFaint"
         android:textSize="@dimen/body_text" />
 
     <androidx.leanback.widget.HorizontalGridView

@@ -35,10 +35,9 @@ rows or "For You" guessing. Plus a reversible debloat of the box itself.
 `[ Apps ] -> [ Guide ] -> [ Library ]`. Left and Right move within a deck's row; at the end of a row
 they slide to the next deck. They never jump diagonally into another row.
 
-1. **Apps** *(Phase 1, built)*: Favorites row (defaults: the apps above, skipping missing ones;
-   hold OK to add, remove, move, or open App info), then every launchable app, six to a row.
-   *Planned*: a Continue Watching row from Watch Next (see below) and an "On now" row of recent
-   channels with what's airing.
+1. **Apps** *(built)*: Favorites row (defaults: the apps above, skipping missing ones; hold OK
+   to add, remove, move, or open App info), Continue Watching and On now (see Phase 2 step 4),
+   then every launchable app, six to a row.
 2. **Guide** *(Phase 2)*: a time grid with channels (number, logo, name) down the side and time
    across the top, a now line, and filters (Favorites, Sports, News, Movies, Locals). In Phase 3, live
    video keeps playing behind it.
@@ -46,7 +45,8 @@ they slide to the next deck. They never jump diagonally into another row.
    resume.
 
 The tabs at the top work like Google TV's: Up from the top of any deck reaches its tab; Left and
-Right move along Apps, Guide, Library and a Settings gear, showing each deck as its tab is focused;
+Right move along a search button, Apps, Guide, Library and a Settings gear, showing each deck as its
+tab is focused;
 Down or OK goes back into the deck where it left off. So no deck needs paging through to leave it.
 Home on Home returns to the first favorite. Back from Guide, Library or the tabs returns to Apps.
 The gear opens the TV's Settings, the only way into Settings once the stock launcher is off.
@@ -57,7 +57,7 @@ The gear opens the TV's Settings, the only way into Settings once the stock laun
    `androidx.leanback:leanback-grid`), HOME and LEANBACK_LAUNCHER intents, the deck pager, app
    discovery that follows installs and enable/disable, the Favorites row, and `tools/debloat.py` with
    the onn list.
-2. **Dispatcharr and VOD**, in four steps:
+2. **Dispatcharr and VOD**, in four steps, then additions asked for after them:
    1. *Connection (built)*: the server screen (address and XC login, saved only once the server
       accepts it), the Xtream Codes client, and channels plus a 13-hour guide window (1 hour back,
       12 ahead) loaded when Home opens with a new server.
@@ -72,15 +72,75 @@ The gear opens the TV's Settings, the only way into Settings once the stock laun
       `Vod`, `XcClient`, tested against replies shaped from vod-organizer's source; to check against
       the real server), (b) the Library deck (*built*): its own server screen (port 8000 when none
       is typed), Movies or Series, rows of posters (Recently added, then each genre that has any),
-      loaded once and again every 6 hours, OK on a movie plays it, (c) the details screen, series
-      seasons and episodes, and playback with resume.
-   4. *Continue Watching* from Watch Next and an *On now* row on the Apps deck.
+      the focused title's name, year, rating and genre above them, loaded once and again every 6
+      hours, (c) the details screen (*built*): backdrop, plot, Play, or Resume and Start over; a
+      series' seasons (shown as soon as one is focused) and episodes with Watched marks and
+      progress bars, and a Play button for the episode to watch next. Players are asked where they
+      stopped (see Playback handoff) and `ProgressStore` keeps the newest 200 positions on the box.
+      Under a minute in starts over; past 95% counts as watched.
+   4. *Continue Watching and On now (built)*, two rows of wide cards on the Apps deck, under
+      Favorites, each shown only when it has cards. Continue Watching: Library titles left
+      part-way (one card per series, the episode left last) mixed by time with other apps' Watch
+      Next entries (not their watchlists), newest first, at most 20. OK on a Library title plays
+      it at once from where it was left, over its details page; holding OK removes it. OK on
+      another app's entry starts that app's own intent. Until Zapparr may read Watch Next, the
+      row ends with an *Other apps' shows* card that asks (see Watch Next below). On now: the
+      channels watched lately (newest first), then the favorite channels, at most 12, each with
+      the program airing, its minutes left and a progress bar, updated every minute while Home
+      is up. OK watches the channel.
+   5. *Search (built)*, for live TV and the Library at once, from the search button left of the
+      tabs or a remote's Search key. Results follow typing (a 200 ms pause), or what's said into
+      the mic when the box has a speech recognizer: Channels (by name, or by number: 4 first, then
+      40 to 49), On TV (programs that haven't ended, each title once per channel, on now first),
+      Movies and Series (every title, those in no known category too). A name matches when it
+      starts with the query, or the query starts a later word, or each typed word starts a word in
+      it, in that order; case, accents and punctuation don't count. Opened from the Library deck,
+      movies and series come first. OK on a channel or a program on now watches it; on a later
+      program, Home's Guide opens on that channel at that time; on a movie or series, its details.
+   6. *Library extras*: My List (hold OK on a poster; a row at the top of the Library),
+      marking movies and episodes watched or unwatched, watched marks and progress bars on
+      posters, and Up next in Continue Watching once an episode is finished.
+   7. *Look and settings (built)*. The gear opens Zapparr's own settings, laid out like
+      TiviMate's: sections (Look, Home, Guide, Library, System) down the left, the focused one's
+      options on the right; OK moves an option to its next value. System holds the TV's own
+      Settings, both server screens, Reset to defaults and the version. Anything with more than
+      one sensible answer is a setting:
+      - *Look*: color theme (22: Zapparr's own; cable-box looks: Cable Blue, Retro Guide, Phosphor,
+        Amber, Crimson, Graphite; and well-known themes from their published palettes: Dracula,
+        Nord, Gruvbox, Solarized, Catppuccin, Tokyo Night, One Dark, Monokai, Rosé Pine,
+        Everforest, GitHub Dark, Night Owl, SynthWave '84, Cobalt2, Kanagawa), background (a glow
+        from the top-left corner, or solid), zoom on focus, a focus glow in the accent, the clock
+        (12-hour, 24-hour or as the TV is set: every time Zapparr shows follows it) and the date.
+      - *Home*: Continue Watching and On now shown or hidden, app names under the focused app or
+        every app, roomy or compact rows.
+      - *Guide*: normal, compact or roomy rows; channel numbers and logos shown or hidden; the now
+        line down the grid or a notch at the top only; the aired part of programs shaded or not.
+      - *Library*: titles under posters, and the backdrop (the focused poster's colors, blurred).
+      A theme is a set of palette colors (`attrs.xml`, `palettes.xml`) that every screen lays over
+      its theme before it draws; Home draws itself again when Settings changes anything. The app
+      icon stays as it is: once Zapparr is Home, nothing else shows it except Settings > Apps,
+      which always shows the original, so the theme's bolt sits in Zapparr's top bar instead.
+      The cable-box polish: the bolt in the theme's accent beside search, the tabs in one pill
+      (as on Google TV), a notch on the Guide's time header at the current time, the focused
+      channel's number in the accent, and LIVE badges on channels and programs on now.
 
    M3U and XMLTV output stay a fallback for servers without the XC API.
 3. **Built-in player**: Media3 (ExoPlayer) with hardware decoding; mini-guide OSD (OK or Down for
    now/next, arrows to browse channels without leaving the stream); channel numbers from remotes
    with digits and an on-screen pad for the onn remote, which has none; last-channel recall; live TV
-   playing behind the menus.
+   playing behind the menus. Asked for on 2026-10-30:
+   - **Preview, then play, as in TiviMate**: OK once on a channel in the Guide starts it in the
+     preview; OK again plays it full screen; Back from full screen returns to the Guide with it
+     still playing in the preview.
+   - **Where the preview goes, the user's choice (a setting)**: a box in a corner of the Guide
+     while the grid scrolls, or the show full screen behind a see-through Guide (how see-through
+     is a setting too).
+   - **A mini guide over the video**, one fixed design: what's on now and next, and other
+     channels, without going back to Home.
+   - **One stream at a time, always**: choosing a channel stops the one playing before the new
+     one starts. The preview, the background and the mini guide all show that one channel. (The
+     provider allows 5 connections; Zapparr still uses one.)
+   - **Movies and series stay a simple tile layout**, like Netflix, Hulu, Paramount+ or Max.
 
 ## Technical decisions
 
@@ -160,9 +220,9 @@ server. `tools/fake_vod_organizer.py` answers the same way.
 - **Streams**: `/movie/<user>/<pass>/<id>.<ext>` and `/series/...` answer `302` to the same path on
   the provider, so `<user>` and `<pass>` must be the **provider's** login: the Library's login is the
   one TiviMate uses for this server. Only `GET` is handled; `HEAD` gets `501`.
-- **One connection**: the provider allows one stream at a time. Zapparr never plays anything
-  itself in Phase 2, so handing a stream to a player leaves the line free; Phase 3's live video
-  behind the menus has to stop before anything else plays.
+- **Connections**: the user's provider allows 5 at a time (corrected 2026-10-30; an earlier note
+  said 1). Zapparr still keeps to one: Phase 3's live video in the preview or behind the menus
+  stops before anything else plays, so nothing streams twice.
 
 ## Watch Next (Continue Watching): how a third-party launcher can read it
 
@@ -180,6 +240,13 @@ Checked against AOSP `TvProvider` (`TvProvider.java`, `AndroidManifest.xml`):
   filter and sort in the app.
 - Only apps that publish to TvProvider appear. Whether Prime Video and Paramount+ do on this box is
   untested: check on the device before building the row around them.
+- Zapparr asks for the permission only from Continue Watching's *Other apps' shows* card, never on
+  its own: a permission prompt over Home at first start would also stop `debloat.py set-home` from
+  seeing Home land on Zapparr. If the user says no, the card goes away; the permission can still be
+  given in App info, or with the `pm grant` command above.
+- An entry's `intent_uri` comes from another app, so before starting it Zapparr drops any selector
+  and URI-permission flags, and refuses one aimed at Zapparr itself. Its pictures may be
+  `content:` links, which Zapparr opens; never `file:` links.
 
 ## Playback handoff (Phase 2)
 
@@ -195,8 +262,9 @@ Checked against AOSP `TvProvider` (`TvProvider.java`, `AndroidManifest.xml`):
   - MX Player's API, which Just Player implements in part, including the result (its author, in
     moneytoo/Player issue #203): takes `position` and `return_result`; returns `position`,
     `duration` and `end_by`. Not documented by Just Player itself: check on the box.
-- **Recent channels**: Zapparr records what it tunes. Knowing what TiviMate played would mean polling
-  Dispatcharr's active streams (untested).
+- **Recent channels**: Zapparr records what it tunes, from the Guide or On now, for the On now
+  row (the last 12). Knowing what TiviMate played would mean polling Dispatcharr's active streams
+  (untested).
 
 ## Debloat rules (onn 4K 2023)
 
@@ -242,4 +310,10 @@ From the tested CleanYourTV list for this box; `tools/debloat.py` enforces them.
    API (corrected 2026-10-29: not from Dispatcharr). Local news apps are added from the Apps deck (hold OK), not
    as defaults.
 3. Does TiviMate accept a stream URL? Run the test command above.
-4. Do Prime Video and Paramount+ publish Watch Next rows on this box?
+4. Do Prime Video and Paramount+ publish Watch Next rows on this box? Press *Other apps' shows*,
+   allow it, watch something in each app for a few minutes, then see whether it shows in Continue
+   Watching.
+5. Does the player on the box hand back where it stopped? Play a movie from the Library for a few
+   minutes, press Back, and the details page should offer *Resume from* that time. Checked against
+   VLC's documentation and MX Player's API (which Just Player follows in part), not yet on a box:
+   the emulator has no real player.

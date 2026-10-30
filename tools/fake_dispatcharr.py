@@ -55,13 +55,14 @@ def logo_png(channel, width=96, height=56):
     return picture(GROUP_COLORS[channel["group"]], channel["num"], width, height)
 
 
-def picture(rgb, seed, width, height):
-    """A PNG in [rgb] with a white bar whose length follows [seed]: logos here, posters in fake_vod_organizer."""
+def picture(rgb, seed, width, height, marked=True):
+    """A PNG in [rgb] with a white bar whose length follows [seed]: logos here, posters in fake_vod_organizer.
+    Without [marked], just the color: a bar blown up behind a details page looks like a broken box."""
     color = bytes(rgb)
     bar = 16 + seed * 7 % (width - 32)
     rows = []
     for y in range(height):
-        on_bar = height * 2 // 5 <= y < height * 3 // 5
+        on_bar = marked and height * 2 // 5 <= y < height * 3 // 5
         rows.append(b"\x00" + b"".join(b"\xff\xff\xff" if on_bar and 16 <= x < 16 + bar else color for x in range(width)))
 
     def chunk(kind, data):

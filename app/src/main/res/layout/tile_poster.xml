@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A poster. The name sits under the picture, so it shows while the picture loads or when there is
-     none. Focusable in touch mode, like the app tiles. -->
+<!-- A poster, and its title under it when Settings > Titles under posters says so. The name inside
+     the card sits under the picture, so it shows while the picture loads or when there is none; the
+     focused poster's full name also shows above the rows. The whole tile takes focus; the card
+     mirrors that state for its focus ring. Focusable in touch mode, like the app tiles. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/poster_width"
     android:layout_height="wrap_content"
@@ -26,7 +28,7 @@
             android:gravity="center"
             android:maxLines="5"
             android:padding="8dp"
-            android:textColor="@color/text_secondary"
+            android:textColor="?attr/zTextDim"
             android:textSize="@dimen/tile_name_text" />
 
         <ImageView
@@ -38,14 +40,13 @@
     </FrameLayout>
 
     <TextView
-        android:id="@+id/poster_caption"
+        android:id="@+id/poster_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:alpha="0"
+        android:layout_marginTop="8dp"
         android:ellipsize="end"
-        android:gravity="center"
-        android:maxLines="1"
-        android:textColor="@color/text_primary"
-        android:textSize="@dimen/tile_caption_text" />
+        android:maxLines="2"
+        android:textColor="?attr/zTextDim"
+        android:textSize="@dimen/tile_name_text"
+        android:visibility="gone" />
 </LinearLayout>
