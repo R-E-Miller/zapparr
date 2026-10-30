@@ -5,6 +5,10 @@
     <dimen name="safe_vertical">27dp</dimen>
     <dimen name="deck_top">32dp</dimen>
 
+    <dimen name="tab_padding">12dp</dimen>
+    <dimen name="tab_corner">20dp</dimen>
+    <dimen name="tab_bar_corner">24dp</dimen>
+
     <dimen name="tile_width">128dp</dimen>
     <dimen name="tile_height">72dp</dimen>
     <dimen name="tile_spacing">16dp</dimen>
@@ -12,11 +16,55 @@
     <dimen name="tile_icon">36dp</dimen>
     <dimen name="tile_icon_top">10dp</dimen>
     <dimen name="row_spacing">28dp</dimen>
+    <dimen name="row_spacing_compact">12dp</dimen>
     <dimen name="corner">8dp</dimen>
+    <!-- Continue Watching and On now: four 16:9 cards fill the same width as six tiles. -->
+    <dimen name="card_width">200dp</dimen>
+    <dimen name="card_height">112dp</dimen>
+    <dimen name="card_logo_padding">20dp</dimen>
+    <dimen name="card_spacing">20dp</dimen>
+    <!-- One height for every theme's name in the picker, so its grid fills row by row. -->
+    <dimen name="palette_name_height">24dp</dimen>
+    <dimen name="settings_sections_width">260dp</dimen>
+    <dimen name="backup_width">720dp</dimen>
     <dimen name="form_width">520dp</dimen>
+
+    <!-- The Guide: six channel rows fit under the program details and filters. -->
+    <dimen name="guide_top">8dp</dimen>
+    <dimen name="guide_row_height">40dp</dimen>
+    <dimen name="guide_row_height_compact">32dp</dimen>
+    <dimen name="guide_row_height_roomy">50dp</dimen>
+    <dimen name="guide_now_marker">5dp</dimen>
+    <dimen name="guide_header_height">26dp</dimen>
+    <dimen name="guide_channel_width">208dp</dimen>
+    <dimen name="guide_number_width">40dp</dimen>
+    <dimen name="guide_logo_width">44dp</dimen>
+    <dimen name="guide_logo_height">26dp</dimen>
+    <dimen name="guide_gap">4dp</dimen>
+    <dimen name="guide_padding">10dp</dimen>
+    <dimen name="guide_corner">6dp</dimen>
+    <dimen name="guide_outline">2dp</dimen>
+    <dimen name="guide_now_width">2dp</dimen>
+    <dimen name="guide_mark_radius">3dp</dimen>
+    <!-- The Library: seven posters to a row, two rows on screen. -->
+    <dimen name="poster_width">104dp</dimen>
+    <dimen name="poster_height">156dp</dimen>
+    <dimen name="poster_spacing">16dp</dimen>
+    <dimen name="library_rows_top">16dp</dimen>
+    <dimen name="library_backdrop_width">620dp</dimen>
+    <dimen name="library_backdrop_height">320dp</dimen>
+    <dimen name="details_top">48dp</dimen>
+    <dimen name="details_width">560dp</dimen>
+    <dimen name="still_width">128dp</dimen>
+    <dimen name="still_height">72dp</dimen>
+    <dimen name="chip_height">32dp</dimen>
+    <dimen name="chip_corner">16dp</dimen>
 
     <dimen name="tile_name_text">12sp</dimen>
     <dimen name="tile_caption_text">14sp</dimen>
     <dimen name="row_title_text">18sp</dimen>
     <dimen name="body_text">18sp</dimen>
+    <dimen name="guide_title_text">15sp</dimen>
+    <dimen name="guide_small_text">13sp</dimen>
+    <dimen name="guide_detail_text">15sp</dimen>
 </resources>

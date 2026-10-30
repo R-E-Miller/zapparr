@@ -2,6 +2,18 @@
 #
 # Adapted from the tested CleanYourTV list for this box (MIT license):
 # https://github.com/Gathin23/cleanyourtv/tree/main/examples/onn-4k-streaming-box-2023
+# CleanYourTV's onn 4K Plus (2025) list, on the same build, disables these too (Play Movies isn't
+# preinstalled there): https://github.com/Gathin23/cleanyourtv/tree/main/examples/onn-4k-plus-2025
+#
+# `debloat.py plan` (with no list named) uses this list, on top of google-tv.txt, on any onn box:
+# match: brand=onn*
+# match: manufacturer=onn*
+# match: device=YOC
+# match: name=onn_*
+#
+# probe and set-home show these on an onn box (both from the CleanYourTV list above):
+# note: The remote's gear button does nothing once the stock launcher is disabled; Zapparr's own gear opens Settings.
+# note: Voice search for titles ("play The Office") needed the stock launcher on one unit; app commands kept working.
 #
 # One package per line; everything after # is a comment. Packages that aren't installed are
 # skipped, and nothing is uninstalled: `python tools/debloat.py restore` re-enables all of it.

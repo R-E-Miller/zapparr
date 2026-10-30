@@ -1,0 +1,61 @@
+# Google TV: every box or TV whose home screen is com.google.android.apps.tv.launcherx (Chromecast
+# with Google TV, Google TV Streamer, onn, Xiaomi TV Box S, and Sony, TCL, Hisense or Philips sets
+# with Google TV).
+#
+# platform: google-tv
+#
+# `debloat.py plan` (with no list named) uses this list on every Google TV device, together with any
+# vendor or model list in this folder whose "match:" line fits the box; `debloat.py probe` names them.
+# One package per line; everything after # is a comment. Packages that aren't installed are skipped,
+# and nothing is uninstalled: `python tools/debloat.py restore` re-enables all of it.
+#
+# Only packages that tested lists on many Google TV devices disable with nothing reported broken.
+# Sources, cited next to each group:
+#   [CYT n/129]  CleanYourTV's tested per-device lists (examples/<model>/debloat.txt, MIT license,
+#                (c) 2026 Gathin), checked 2026-10-30: n of its 129 Google TV lists disable it.
+#                https://github.com/Gathin23/cleanyourtv
+#   [RCL]        rcland12/debloat-tv, packages-chromecast.txt, tested on a Chromecast with Google TV 4K
+#                (Android 14): https://github.com/rcland12/debloat-tv
+#
+# Not here on purpose:
+#   - The stock launcher and the setup wizard: `debloat.py set-home` handles them, once Zapparr is Home.
+#   - Anything debloat.py protects (Play Store and Services, TV Settings, keyboards, TvProvider, the
+#     remote, Bluetooth and network services), and anything the box opens Settings or its inputs with,
+#     or that created a saved Wi-Fi network: plan skips those whatever a list says.
+#   - com.google.android.tvrecommendations: protected, see debloat.py.
+#   - YouTube, YouTube Music, Netflix, Prime Video and other apps: yours to keep or switch off.
+#
+# Kept by default, but yours to decide. Remove the leading "# " to disable one:
+# com.google.android.katniss                    # Assistant and voice search, also Zapparr's Search mic [CYT 33/129]
+# com.google.android.apps.mediashell            # Chromecast built-in: casting from your phone [CYT 18/129]
+# com.google.android.apps.tv.dreamx             # ambient-mode screensaver; also holds the Google Home panel (lights) [CYT 52/129]
+
+# Telemetry and feedback [CYT 116/129, 60/129, 3/129; RCL]
+com.google.android.feedback
+com.android.tv.feedbackconsent
+com.google.android.tv.remotecontrol.logging     # remote usage logging
+
+# Privacy Sandbox ad measurement and on-device personalization: Android 14 modules, named com.android.*
+# on some boxes and com.google.android.* on Google's own. Play Store, voice search and YouTube kept
+# working with them off; re-enable them if the Play Store or the Assistant misbehave. [CYT 45/129,
+# 42/129, 42/129; the com.google.android.* names 3/129, on the Chromecast and Streamer lists]
+com.android.adservices.api
+com.android.ondevicepersonalization.services
+com.android.federatedcompute.services
+com.google.android.adservices.api
+com.google.android.ext.adservices.api
+com.google.android.ondevicepersonalization.services
+com.google.android.federatedcompute
+
+# Partner attribution, auto-installs and leftovers from first setup [CYT 57/129, 43/129, 23/129, 39/129]
+com.google.android.partnersetup                 # RLZ partner-attribution pings
+android.autoinstalls.config.google.gtvpai       # Play auto-installs of partner apps, read at setup
+android.autoinstalls.config.soc.amlogic         # the same on Amlogic boxes [CYT: 4 lists]
+com.google.android.onetimeinitializer           # runs once after first setup
+com.google.android.syncadapters.calendar        # Google Calendar sync; nothing on a TV reads it
+
+# Preloaded apps [CYT 102/129, 59/129, 33/129, 33/129; RCL]
+com.google.android.play.games
+com.google.android.videos                       # Google TV / Play Movies: re-enable it to watch purchases
+com.android.printspooler
+com.google.android.marvin.talkback              # screen reader: delete this line if you use it

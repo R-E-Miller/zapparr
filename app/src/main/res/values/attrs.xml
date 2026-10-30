@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- A palette: the colors every screen draws with. Theme.Zapparr sets Zapparr's own; the
+         Palette.* styles in palettes.xml replace them all, and screens apply the one chosen in
+         Settings before they draw (see tv.zapparr.look). -->
+    <attr name="zBackground" format="color" />
+    <!-- Where the background glows: the top-left corner of the gradient. -->
+    <attr name="zBackgroundGlow" format="color" />
+    <!-- Tiles, cells, chips and buttons, and a step up from them: on-now cells, the focused row. -->
+    <attr name="zSurface" format="color" />
+    <attr name="zSurfaceHigh" format="color" />
+    <!-- Focus, the now line, progress, the selected tab; and text on it. -->
+    <attr name="zAccent" format="color" />
+    <attr name="zOnAccent" format="color" />
+    <attr name="zText" format="color" />
+    <attr name="zTextDim" format="color" />
+    <attr name="zTextFaint" format="color" />
+    <!-- The background at three strengths, for scrims over pictures. -->
+    <attr name="zScrimStrong" format="color" />
+    <attr name="zScrimMid" format="color" />
+    <attr name="zScrimLight" format="color" />
+</resources>

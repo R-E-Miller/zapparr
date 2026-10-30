@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Settings > System > Backup and restore: back up now, whether the server logins go along, a
+     phone or computer, then the backups on this box to restore from. -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="@dimen/safe_horizontal"
+    android:paddingTop="@dimen/safe_vertical"
+    android:paddingEnd="@dimen/safe_horizontal">
+
+    <TextView
+        android:id="@+id/backup_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="12dp"
+        android:drawableStart="@drawable/ic_bolt"
+        android:drawableTint="?attr/zAccent"
+        android:gravity="center_vertical"
+        android:text="@string/backup_title"
+        android:textColor="?attr/zText"
+        android:textSize="28sp" />
+
+    <ScrollView
+        android:layout_width="@dimen/backup_width"
+        android:layout_height="match_parent"
+        android:layout_below="@id/backup_header"
+        android:layout_marginTop="24dp"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/safe_vertical"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/backup_rows"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+</RelativeLayout>

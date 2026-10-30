@@ -1,0 +1,66 @@
+# Android TV: every box or TV whose home screen is Google's Android TV launcher
+# (com.google.android.tvlauncher, or com.google.android.leanbacklauncher on older ones): NVIDIA SHIELD,
+# Xiaomi Mi Box S and Mi TV Stick, and Sony, TCL, Hisense or Philips sets with Android TV.
+#
+# platform: android-tv
+#
+# `debloat.py plan` (with no list named) uses this list on every Android TV device, together with any
+# vendor or model list in this folder whose "match:" line fits the box; `debloat.py probe` names them.
+# One package per line; everything after # is a comment. Packages that aren't installed are skipped,
+# and nothing is uninstalled: `python tools/debloat.py restore` re-enables all of it.
+#
+# Only packages that tested lists on many Android TV devices disable with nothing reported broken.
+# Sources, cited next to each group:
+#   [CYT n/189]  CleanYourTV's tested per-device lists (examples/<model>/debloat.txt, MIT license,
+#                (c) 2026 Gathin), checked 2026-10-30: n of its 189 Android TV lists disable it.
+#                https://github.com/Gathin23/cleanyourtv
+#   [SHIELD]     bharvey88, debloating four NVIDIA SHIELDs over ADB:
+#                https://gist.github.com/bharvey88/c211c6ca1d9e5f1379b204bf75067275
+#
+# Not here on purpose:
+#   - The stock launcher and the setup wizard: `debloat.py set-home` handles them, once Zapparr is Home.
+#     On most Android TV builds the setup wizard doesn't answer Home, so set-home leaves it alone.
+#   - Anything debloat.py protects (Play Store and Services, TV Settings, keyboards, TvProvider, the
+#     remote, Bluetooth and network services), and anything the box opens Settings or its inputs with,
+#     or that created a saved Wi-Fi network: plan skips those whatever a list says.
+#   - com.google.android.tvrecommendations, which 143 of the 189 lists disable: on a SHIELD the phone
+#     app's keys stop working without it, so debloat.py protects it.
+#   - com.google.android.speech.pumpkin (on-device speech): in-app mic buttons need it.
+#   - YouTube, YouTube Music, Netflix, Prime Video and other apps: yours to keep or switch off.
+#
+# Kept by default, but yours to decide. Remove the leading "# " to disable one:
+# com.google.android.katniss                    # Assistant and voice search, also Zapparr's Search mic [CYT 84/189]
+# com.google.android.apps.mediashell            # Chromecast built-in: casting from your phone [CYT 27/189]
+# com.google.android.backdrop                   # ambient-mode screensaver: pick another one first, or none is set [CYT 75/189]
+# com.google.android.tv                         # Live Channels: keep it for a network tuner such as HDHomeRun [CYT 4/189; SHIELD]
+
+# Telemetry and feedback [CYT 155/189, 53/189, 15/189; SHIELD]
+com.google.android.feedback
+com.google.android.tv.bugreportsender           # uploads bug reports
+com.android.tv.feedbackconsent
+
+# Privacy Sandbox ad measurement and on-device personalization (Android TV 12 and later), named
+# com.android.* or com.google.android.*. Re-enable them if the Play Store or the Assistant misbehave.
+# [CYT 15/189, 12/189, 12/189; Google TV's lists disable the same modules]
+com.android.adservices.api
+com.android.ondevicepersonalization.services
+com.android.federatedcompute.services
+com.google.android.adservices.api
+com.google.android.ext.adservices.api
+com.google.android.ondevicepersonalization.services
+com.google.android.federatedcompute
+
+# Partner attribution, auto-installs, data saver and leftovers from first setup
+# [CYT 71/189, 38/189, 68/189, 21/189; SHIELD]
+com.google.android.partnersetup                 # RLZ partner-attribution pings
+android.autoinstalls.config.soc.amlogic         # Play auto-installs of partner apps on Amlogic boxes [CYT: 4 lists]
+com.google.android.onetimeinitializer           # runs once after first setup
+com.google.android.syncadapters.calendar        # Google Calendar sync; nothing on a TV reads it
+com.google.android.apps.nbu.smartconnect.tv     # Google's data-saver VPN and data meter, starts at boot
+
+# Preloaded apps [CYT 119/189, 100/189, 19/189, 59/189, 32/189; SHIELD]
+com.google.android.play.games
+com.google.android.videos                       # Play Movies & TV: re-enable it to watch purchases
+com.google.android.music                        # Google Play Music, closed in 2020
+com.android.printspooler
+com.google.android.marvin.talkback              # screen reader: delete this line if you use it

@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The color themes Settings offers (tv.zapparr.look.Palettes lists them in order). Each sets
+     every palette color in attrs.xml. Generated from a table of six colors per theme; the faint
+     text, the text on the accent, the glow and the scrims are derived the same way for all. -->
+<resources>
+    <!-- Parent of the Palette.* styles below. -->
+    <style name="Palette" />
+    <!-- Zapparr's own -->
+    <style name="Palette.Zapparr">
+        <item name="zBackground">#FF0B0E13</item>
+        <item name="zBackgroundGlow">#FF1B2230</item>
+        <item name="zSurface">#FF1A1F27</item>
+        <item name="zSurfaceHigh">#FF262D39</item>
+        <item name="zAccent">#FFFFC53D</item>
+        <item name="zOnAccent">#FF0B0E13</item>
+        <item name="zText">#FFF3F5F8</item>
+        <item name="zTextDim">#FFA3ACB9</item>
+        <item name="zTextFaint">#FF6E757F</item>
+        <item name="zScrimStrong">#F20B0E13</item>
+        <item name="zScrimMid">#CC0B0E13</item>
+        <item name="zScrimLight">#550B0E13</item>
+    </style>
+    <!-- a modern cable box: near-black navy and an electric blue -->
+    <style name="Palette.CableBlue">
+        <item name="zBackground">#FF070B14</item>
+        <item name="zBackgroundGlow">#FF0A1527</item>
+        <item name="zSurface">#FF121A2B</item>
+        <item name="zSurfaceHigh">#FF1D2942</item>
+        <item name="zAccent">#FF2F8CFF</item>
+        <item name="zOnAccent">#FF070B14</item>
+        <item name="zText">#FFF2F5FA</item>
+        <item name="zTextDim">#FF93A0B8</item>
+        <item name="zTextFaint">#FF626C7F</item>
+        <item name="zScrimStrong">#F2070B14</item>
+        <item name="zScrimMid">#CC070B14</item>
+        <item name="zScrimLight">#55070B14</item>
+    </style>
+    <!-- the 1990s cable guide channel: royal blue, lighter blue listings, white text, yellow -->
+    <style name="Palette.RetroGuide">
+        <item name="zBackground">#FF102A8C</item>
+        <item name="zBackgroundGlow">#FF233881</item>
+        <item name="zSurface">#FF2244B4</item>
+        <item name="zSurfaceHigh">#FF3560D4</item>
+        <item name="zAccent">#FFFFD400</item>
+        <item name="zOnAccent">#FF102A8C</item>
+        <item name="zText">#FFFFFFFF</item>
+        <item name="zTextDim">#FFD6E0FF</item>
+        <item name="zTextFaint">#FF91A0D7</item>
+        <item name="zScrimStrong">#F2102A8C</item>
+        <item name="zScrimMid">#CC102A8C</item>
+        <item name="zScrimLight">#55102A8C</item>
+    </style>
+    <!-- a green CRT terminal: green text on green-black, the accent its glow -->
+    <style name="Palette.Phosphor">
+        <item name="zBackground">#FF020C04</item>
+        <item name="zBackgroundGlow">#FF131F15</item>
+        <item name="zSurface">#FF072010</item>
+        <item name="zSurfaceHigh">#FF0D3A19</item>
+        <item name="zAccent">#FFD4FFDC</item>
+        <item name="zOnAccent">#FF020C04</item>
+        <item name="zText">#FF41FF66</item>
+        <item name="zTextDim">#FF2BB24C</item>
+        <item name="zTextFaint">#FF1D7833</item>
+        <item name="zScrimStrong">#F2020C04</item>
+        <item name="zScrimMid">#CC020C04</item>
+        <item name="zScrimLight">#55020C04</item>
+    </style>
+    <!-- an amber CRT terminal, its accent the glow -->
+    <style name="Palette.Amber">
+        <item name="zBackground">#FF0D0700</item>
+        <item name="zBackgroundGlow">#FF20190E</item>
+        <item name="zSurface">#FF211302</item>
+        <item name="zSurfaceHigh">#FF3A2306</item>
+        <item name="zAccent">#FFFFE4B0</item>
+        <item name="zOnAccent">#FF0D0700</item>
+        <item name="zText">#FFFFB000</item>
+        <item name="zTextDim">#FFC48300</item>
+        <item name="zTextFaint">#FF845800</item>
+        <item name="zScrimStrong">#F20D0700</item>
+        <item name="zScrimMid">#CC0D0700</item>
+        <item name="zScrimLight">#550D0700</item>
+    </style>
+    <!-- neutral near-black with a streaming-app red -->
+    <style name="Palette.Crimson">
+        <item name="zBackground">#FF0B0B0D</item>
+        <item name="zBackgroundGlow">#FF1C0B0E</item>
+        <item name="zSurface">#FF19191D</item>
+        <item name="zSurfaceHigh">#FF29292F</item>
+        <item name="zAccent">#FFE50914</item>
+        <item name="zOnAccent">#FFFFFFFF</item>
+        <item name="zText">#FFF5F5F7</item>
+        <item name="zTextDim">#FFA8A8B0</item>
+        <item name="zTextFaint">#FF717177</item>
+        <item name="zScrimStrong">#F20B0B0D</item>
+        <item name="zScrimMid">#CC0B0B0D</item>
+        <item name="zScrimLight">#550B0B0D</item>
+    </style>
+    <!-- neutral grays, off-white text, a white accent -->
+    <style name="Palette.Graphite">
+        <item name="zBackground">#FF141414</item>
+        <item name="zBackgroundGlow">#FF272727</item>
+        <item name="zSurface">#FF222222</item>
+        <item name="zSurfaceHigh">#FF333333</item>
+        <item name="zAccent">#FFFFFFFF</item>
+        <item name="zOnAccent">#FF141414</item>
+        <item name="zText">#FFE8E8E8</item>
+        <item name="zTextDim">#FFA3A3A3</item>
+        <item name="zTextFaint">#FF717171</item>
+        <item name="zScrimStrong">#F2141414</item>
+        <item name="zScrimMid">#CC141414</item>
+        <item name="zScrimLight">#55141414</item>
+    </style>
+    <!-- draculatheme.com/spec: Background, Background Light, Selection, Foreground, Purple; dim text between Foreground and Comment -->
+    <style name="Palette.Dracula">
+        <item name="zBackground">#FF282A36</item>
+        <item name="zBackgroundGlow">#FF343246</item>
+        <item name="zSurface">#FF343746</item>
+        <item name="zSurfaceHigh">#FF44475A</item>
+        <item name="zAccent">#FFBD93F9</item>
+        <item name="zOnAccent">#FF282A36</item>
+        <item name="zText">#FFF8F8F2</item>
+        <item name="zTextDim">#FFADB5CB</item>
+        <item name="zTextFaint">#FF7E8497</item>
+        <item name="zScrimStrong">#F2282A36</item>
+        <item name="zScrimMid">#CC282A36</item>
+        <item name="zScrimLight">#55282A36</item>
+    </style>
+    <!-- nordtheme.com/docs/colors-and-palettes: nord0, nord1, nord2, nord6, nord4, nord8 -->
+    <style name="Palette.Nord">
+        <item name="zBackground">#FF2E3440</item>
+        <item name="zBackgroundGlow">#FF353F4C</item>
+        <item name="zSurface">#FF3B4252</item>
+        <item name="zSurfaceHigh">#FF434C5E</item>
+        <item name="zAccent">#FF88C0D0</item>
+        <item name="zOnAccent">#FF2E3440</item>
+        <item name="zText">#FFECEFF4</item>
+        <item name="zTextDim">#FFD8DEE9</item>
+        <item name="zTextFaint">#FF9CA2AE</item>
+        <item name="zScrimStrong">#F22E3440</item>
+        <item name="zScrimMid">#CC2E3440</item>
+        <item name="zScrimLight">#552E3440</item>
+    </style>
+    <!-- github.com/morhetz/gruvbox: bg0, bg1, bg2, fg1, fg4, yellow -->
+    <style name="Palette.Gruvbox">
+        <item name="zBackground">#FF282828</item>
+        <item name="zBackgroundGlow">#FF393429</item>
+        <item name="zSurface">#FF3C3836</item>
+        <item name="zSurfaceHigh">#FF504945</item>
+        <item name="zAccent">#FFFABD2F</item>
+        <item name="zOnAccent">#FF282828</item>
+        <item name="zText">#FFEBDBB2</item>
+        <item name="zTextDim">#FFA89984</item>
+        <item name="zTextFaint">#FF7B7164</item>
+        <item name="zScrimStrong">#F2282828</item>
+        <item name="zScrimMid">#CC282828</item>
+        <item name="zScrimLight">#55282828</item>
+    </style>
+    <!-- ethanschoonover.com/solarized: base03, base02, a step lighter, base1, base0, blue -->
+    <style name="Palette.Solarized">
+        <item name="zBackground">#FF002B36</item>
+        <item name="zBackgroundGlow">#FF033342</item>
+        <item name="zSurface">#FF073642</item>
+        <item name="zSurfaceHigh">#FF10434F</item>
+        <item name="zAccent">#FF268BD2</item>
+        <item name="zOnAccent">#FF111111</item>
+        <item name="zText">#FF93A1A1</item>
+        <item name="zTextDim">#FF839496</item>
+        <item name="zTextFaint">#FF556F74</item>
+        <item name="zScrimStrong">#F2002B36</item>
+        <item name="zScrimMid">#CC002B36</item>
+        <item name="zScrimLight">#55002B36</item>
+    </style>
+    <!-- github.com/catppuccin/palette (Mocha): base, surface0, surface1, text, subtext0, mauve -->
+    <style name="Palette.Catppuccin">
+        <item name="zBackground">#FF1E1E2E</item>
+        <item name="zBackgroundGlow">#FF2C293E</item>
+        <item name="zSurface">#FF313244</item>
+        <item name="zSurfaceHigh">#FF45475A</item>
+        <item name="zAccent">#FFCBA6F7</item>
+        <item name="zOnAccent">#FF1E1E2E</item>
+        <item name="zText">#FFCDD6F4</item>
+        <item name="zTextDim">#FFA6ADC8</item>
+        <item name="zTextFaint">#FF767B92</item>
+        <item name="zScrimStrong">#F21E1E2E</item>
+        <item name="zScrimMid">#CC1E1E2E</item>
+        <item name="zScrimLight">#551E1E2E</item>
+    </style>
+    <!-- github.com/enkia/tokyo-night-vscode-theme (night): bg, bg_highlight, terminal_black, fg, fg_dark, blue -->
+    <style name="Palette.TokyoNight">
+        <item name="zBackground">#FF1A1B26</item>
+        <item name="zBackgroundGlow">#FF222637</item>
+        <item name="zSurface">#FF292E42</item>
+        <item name="zSurfaceHigh">#FF414868</item>
+        <item name="zAccent">#FF7AA2F7</item>
+        <item name="zOnAccent">#FF1A1B26</item>
+        <item name="zText">#FFC0CAF5</item>
+        <item name="zTextDim">#FFA9B1D6</item>
+        <item name="zTextFaint">#FF777C98</item>
+        <item name="zScrimStrong">#F21A1B26</item>
+        <item name="zScrimMid">#CC1A1B26</item>
+        <item name="zScrimLight">#551A1B26</item>
+    </style>
+    <!-- Atom's one-dark-syntax and one-dark-ui: syntax-bg, level-1, syntax-selection, mono-1, between mono-1 and mono-2, hue-2 -->
+    <style name="Palette.OneDark">
+        <item name="zBackground">#FF282C34</item>
+        <item name="zBackgroundGlow">#FF2D3643</item>
+        <item name="zSurface">#FF353B45</item>
+        <item name="zSurfaceHigh">#FF3E4451</item>
+        <item name="zAccent">#FF61AFEF</item>
+        <item name="zOnAccent">#FF282C34</item>
+        <item name="zText">#FFABB2BF</item>
+        <item name="zTextDim">#FF969DAB</item>
+        <item name="zTextFaint">#FF707581</item>
+        <item name="zScrimStrong">#F2282C34</item>
+        <item name="zScrimMid">#CC282C34</item>
+        <item name="zScrimLight">#55282C34</item>
+    </style>
+    <!-- the original Monokai.tmTheme: background, lineHighlight, selection, foreground, between it and Comment, Keyword -->
+    <style name="Palette.Monokai">
+        <item name="zBackground">#FF272822</item>
+        <item name="zBackgroundGlow">#FF382828</item>
+        <item name="zSurface">#FF3E3D32</item>
+        <item name="zSurfaceHigh">#FF49483E</item>
+        <item name="zAccent">#FFF92672</item>
+        <item name="zOnAccent">#FF111111</item>
+        <item name="zText">#FFF8F8F2</item>
+        <item name="zTextDim">#FFB6B4A8</item>
+        <item name="zTextFaint">#FF848379</item>
+        <item name="zScrimStrong">#F2272822</item>
+        <item name="zScrimMid">#CC272822</item>
+        <item name="zScrimLight">#55272822</item>
+    </style>
+    <!-- rosepinetheme.com/palette (main): base, surface, highlight med, text, subtle, rose -->
+    <style name="Palette.RosePine">
+        <item name="zBackground">#FF191724</item>
+        <item name="zBackgroundGlow">#FF2A2430</item>
+        <item name="zSurface">#FF1F1D2E</item>
+        <item name="zSurfaceHigh">#FF403D52</item>
+        <item name="zAccent">#FFEBBCBA</item>
+        <item name="zOnAccent">#FF191724</item>
+        <item name="zText">#FFE0DEF4</item>
+        <item name="zTextDim">#FF908CAA</item>
+        <item name="zTextFaint">#FF66637B</item>
+        <item name="zScrimStrong">#F2191724</item>
+        <item name="zScrimMid">#CC191724</item>
+        <item name="zScrimLight">#55191724</item>
+    </style>
+    <!-- github.com/sainnhe/everforest (dark medium): bg0, bg1, bg2, fg, grey2, green -->
+    <style name="Palette.Everforest">
+        <item name="zBackground">#FF2D353B</item>
+        <item name="zBackgroundGlow">#FF374041</item>
+        <item name="zSurface">#FF343F44</item>
+        <item name="zSurfaceHigh">#FF3D484D</item>
+        <item name="zAccent">#FFA7C080</item>
+        <item name="zOnAccent">#FF2D353B</item>
+        <item name="zText">#FFD3C6AA</item>
+        <item name="zTextDim">#FF9DA9A0</item>
+        <item name="zTextFaint">#FF76807D</item>
+        <item name="zScrimStrong">#F22D353B</item>
+        <item name="zScrimMid">#CC2D353B</item>
+        <item name="zScrimLight">#552D353B</item>
+    </style>
+    <!-- Primer (@primer/primitives, dark): bgColor-default, bgColor-muted, control-bgColor-hover, fgColor-default, fgColor-muted, fgColor-accent -->
+    <style name="Palette.GitHubDark">
+        <item name="zBackground">#FF0D1117</item>
+        <item name="zBackgroundGlow">#FF111B29</item>
+        <item name="zSurface">#FF151B23</item>
+        <item name="zSurfaceHigh">#FF262C36</item>
+        <item name="zAccent">#FF4493F8</item>
+        <item name="zOnAccent">#FF0D1117</item>
+        <item name="zText">#FFF0F6FC</item>
+        <item name="zTextDim">#FF9198A1</item>
+        <item name="zTextFaint">#FF636971</item>
+        <item name="zScrimStrong">#F20D1117</item>
+        <item name="zScrimMid">#CC0D1117</item>
+        <item name="zScrimLight">#550D1117</item>
+    </style>
+    <!-- github.com/sdras/night-owl-vscode-theme: editor and tab backgrounds, selection, foregrounds, keyword -->
+    <style name="Palette.NightOwl">
+        <item name="zBackground">#FF011627</item>
+        <item name="zBackgroundGlow">#FF112037</item>
+        <item name="zSurface">#FF0B2942</item>
+        <item name="zSurfaceHigh">#FF1D3B53</item>
+        <item name="zAccent">#FFC792EA</item>
+        <item name="zOnAccent">#FF011627</item>
+        <item name="zText">#FFD6DEEB</item>
+        <item name="zTextDim">#FF89A4BB</item>
+        <item name="zTextFaint">#FF597287</item>
+        <item name="zScrimStrong">#F2011627</item>
+        <item name="zScrimMid">#CC011627</item>
+        <item name="zScrimLight">#55011627</item>
+    </style>
+    <!-- github.com/robb0wen/synthwave-vscode: activity bar, editor, list hover, foreground, comment, neon pink -->
+    <style name="Palette.Synthwave">
+        <item name="zBackground">#FF171520</item>
+        <item name="zBackgroundGlow">#FF2A1D2F</item>
+        <item name="zSurface">#FF262335</item>
+        <item name="zSurfaceHigh">#FF37294D</item>
+        <item name="zAccent">#FFFF7EDB</item>
+        <item name="zOnAccent">#FF171520</item>
+        <item name="zText">#FFFFFFFF</item>
+        <item name="zTextDim">#FF848BBD</item>
+        <item name="zTextFaint">#FF5E6286</item>
+        <item name="zScrimStrong">#F2171520</item>
+        <item name="zScrimMid">#CC171520</item>
+        <item name="zScrimLight">#55171520</item>
+    </style>
+    <!-- github.com/wesbos/cobalt2-vscode: Blue Dark, Blue, Blue Highlight, foregrounds, Yellow -->
+    <style name="Palette.Cobalt2">
+        <item name="zBackground">#FF122738</item>
+        <item name="zBackgroundGlow">#FF253434</item>
+        <item name="zSurface">#FF193549</item>
+        <item name="zSurfaceHigh">#FF1F4662</item>
+        <item name="zAccent">#FFFFC600</item>
+        <item name="zOnAccent">#FF122738</item>
+        <item name="zText">#FFFFFFFF</item>
+        <item name="zTextDim">#FFAAAAAA</item>
+        <item name="zTextFaint">#FF757C82</item>
+        <item name="zScrimStrong">#F2122738</item>
+        <item name="zScrimMid">#CC122738</item>
+        <item name="zScrimLight">#55122738</item>
+    </style>
+    <!-- github.com/rebelot/kanagawa.nvim (wave): sumiInk3, sumiInk4, sumiInk5, fujiWhite, oldWhite, crystalBlue -->
+    <style name="Palette.Kanagawa">
+        <item name="zBackground">#FF1F1F28</item>
+        <item name="zBackgroundGlow">#FF272936</item>
+        <item name="zSurface">#FF2A2A37</item>
+        <item name="zSurfaceHigh">#FF363646</item>
+        <item name="zAccent">#FF7E9CD8</item>
+        <item name="zOnAccent">#FF1F1F28</item>
+        <item name="zText">#FFDCD7BA</item>
+        <item name="zTextDim">#FFC8C093</item>
+        <item name="zTextFaint">#FF8D886E</item>
+        <item name="zScrimStrong">#F21F1F28</item>
+        <item name="zScrimMid">#CC1F1F28</item>
+        <item name="zScrimLight">#551F1F28</item>
+    </style>
+</resources>

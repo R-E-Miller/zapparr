@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Settings > Color theme: every palette as a small picture of a screen in its colors. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/safe_vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/safe_horizontal"
+        android:text="@string/setting_palette"
+        android:textColor="?attr/zText"
+        android:textSize="28sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/safe_horizontal"
+        android:layout_marginTop="4dp"
+        android:text="@string/palettes_hint"
+        android:textColor="?attr/zTextDim"
+        android:textSize="@dimen/guide_detail_text" />
+
+    <androidx.leanback.widget.VerticalGridView
+        android:id="@+id/palettes"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/safe_horizontal"
+        android:paddingTop="24dp"
+        android:paddingEnd="@dimen/safe_horizontal"
+        android:paddingBottom="@dimen/safe_vertical"
+        android:horizontalSpacing="@dimen/card_spacing"
+        android:verticalSpacing="@dimen/card_spacing"
+        app:numberOfColumns="4" />
+</LinearLayout>

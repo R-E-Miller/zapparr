@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A poster, and its title under it when Settings > Titles under posters says so. The name inside
+     the card sits under the picture, so it shows while the picture loads or when there is none; the
+     focused poster's full name also shows above the rows. The whole tile takes focus; the card
+     mirrors that state for its focus ring. Focusable in touch mode, like the app tiles. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/poster_width"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/poster_card"
+        android:layout_width="@dimen/poster_width"
+        android:layout_height="@dimen/poster_height"
+        android:background="@drawable/tile_background"
+        android:duplicateParentState="true"
+        android:foreground="@drawable/tile_focus">
+
+        <TextView
+            android:id="@+id/poster_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="5"
+            android:padding="8dp"
+            android:textColor="?attr/zTextDim"
+            android:textSize="@dimen/tile_name_text" />
+
+        <ImageView
+            android:id="@+id/poster_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no"
+            android:scaleType="centerCrop" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/poster_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="?attr/zTextDim"
+        android:textSize="@dimen/tile_name_text"
+        android:visibility="gone" />
+</LinearLayout>

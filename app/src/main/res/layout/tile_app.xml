@@ -44,7 +44,7 @@
             android:maxLines="1"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:textColor="@color/text_primary"
+            android:textColor="?attr/zText"
             android:textSize="@dimen/tile_name_text" />
     </FrameLayout>
 
@@ -57,6 +57,6 @@
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="1"
-        android:textColor="@color/text_primary"
+        android:textColor="?attr/zText"
         android:textSize="@dimen/tile_caption_text" />
 </LinearLayout>

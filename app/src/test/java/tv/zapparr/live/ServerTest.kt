@@ -13,6 +13,12 @@ class ServerTest {
     }
 
     @Test
+    fun theLibraryServerDefaultsToVodOrganizersPort() {
+        assertEquals("http://192.168.68.74:8000", Server.normalizeAddress("192.168.68.74", ServerKind.LIBRARY.defaultPort))
+        assertEquals("http://192.168.68.74:9000", Server.normalizeAddress("192.168.68.74:9000", ServerKind.LIBRARY.defaultPort))
+    }
+
+    @Test
     fun aTypedPortOrSchemeIsKept() {
         assertEquals("http://192.168.1.20:8080", Server.normalizeAddress("192.168.1.20:8080"))
         assertEquals("https://tv.example.com", Server.normalizeAddress("HTTPS://tv.example.com/"))

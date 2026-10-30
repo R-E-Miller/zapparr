@@ -5,7 +5,7 @@
             <corners android:radius="@dimen/corner" />
             <stroke
                 android:width="3dp"
-                android:color="@color/accent" />
+                android:color="?attr/zAccent" />
         </shape>
     </item>
 </selector>

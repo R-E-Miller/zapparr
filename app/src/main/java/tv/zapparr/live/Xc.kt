@@ -34,9 +34,11 @@ class XcException(val problem: Problem, cause: Throwable? = null) : Exception(pr
  */
 object Xc {
 
-    fun apiUrl(server: Server, action: String? = null): String {
+    /** A player_api.php call; [params] are added after the action, encoded. */
+    fun apiUrl(server: Server, action: String? = null, vararg params: Pair<String, String>): String {
         val login = "username=${query(server.username)}&password=${query(server.password)}"
-        return "${server.address}/player_api.php?$login" + if (action == null) "" else "&action=$action"
+        val extra = params.joinToString("") { (name, value) -> "&$name=${query(value)}" }
+        return "${server.address}/player_api.php?$login" + (if (action == null) "" else "&action=$action") + extra
     }
 
     fun xmltvUrl(server: Server) =
@@ -44,6 +46,12 @@ object Xc {
 
     fun liveUrl(server: Server, channel: Channel) =
         "${server.address}/live/${path(server.username)}/${path(server.password)}/${channel.streamId}"
+
+    fun movieUrl(server: Server, movie: Movie) =
+        "${server.address}/movie/${path(server.username)}/${path(server.password)}/${movie.id}.${path(movie.extension)}"
+
+    fun episodeUrl(server: Server, episode: Episode) =
+        "${server.address}/series/${path(server.username)}/${path(server.password)}/${episode.id}.${path(episode.extension)}"
 
     /** Throws unless the reply to a bare player_api.php call says the login works. */
     fun checkLogin(json: String) {
@@ -98,7 +106,7 @@ object Xc {
     private fun JSONObject.text(key: String): String? =
         if (isNull(key)) null else opt(key)?.toString()?.trim()?.takeIf { it.isNotEmpty() }
 
-    private fun resolve(address: String, url: String) = try {
+    internal fun resolve(address: String, url: String) = try {
         URI("$address/").resolve(url).toString()
     } catch (e: Exception) { // IllegalArgumentException from a malformed URL
         null

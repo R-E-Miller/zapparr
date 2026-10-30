@@ -15,8 +15,8 @@ fun Context.openAppInfo(app: AppEntry) = start(
     app.label,
 )
 
-/** The TV's own Settings: with the stock launcher gone, this is the way in. */
-fun Context.openSettings() = start(
+/** The TV's own Settings: with the stock launcher gone, Zapparr's settings are the way in. */
+fun Context.openTvSettings() = start(
     Intent(Settings.ACTION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
     getString(R.string.settings),
 )

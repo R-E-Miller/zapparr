@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One of the Guide's filters: Favorites, All channels, or a channel group. -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Zapparr.Chip" />

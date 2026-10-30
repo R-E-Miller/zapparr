@@ -4,23 +4,31 @@ The set-top "launcharr" for Android TV: a lean home screen that works like a cab
 live TV guide from [Dispatcharr](https://github.com/Dispatcharr/Dispatcharr), and your movies and
 series sit side by side, with no ads and nothing deciding what you want to watch.
 
-> **Status: early development (Phase 2 under way).** The home screen, the app rows and the debloat
-> tool work. Zapparr connects to Dispatcharr and loads its channels and guide; the guide grid and
-> the Library come next.
+> **Status: early development (Phase 2's four steps built; Phase 3 next).** The home screen, the
+> debloat tool, the live TV guide and the Library work, and the Apps deck has Continue Watching
+> (what you left part-way, in the Library and in other apps) and On now (your recent channels with
+> what's airing). Search finds channels, programs, movies and series in one place. The gear opens
+> Zapparr's own settings: 22 color themes, a 12 or 24-hour clock, and how each screen looks.
+> Streams go to your video player until Phase 3's built-in player.
 
 ## What it is
 
-Three decks, side by side. Left and Right on the remote move between them at the edge of a row.
+Three decks, side by side. Left and Right on the remote move between them at the edge of a row,
+or press Up to the tabs at the top, as on Google TV, and pick one.
 
 | Apps | Guide | Library |
 |---|---|---|
-| Your favorite apps in a row, then every app on the box | Dispatcharr channels in a cable-style time grid *(Phase 2)* | Movies and series from Dispatcharr's VOD or your own catalog *(Phase 2)* |
+| Your favorite apps in a row, then every app on the box | Dispatcharr channels in a cable-style time grid | Movies and series from your library server, in rows of posters by genre |
 
 - **Built for budget boxes.** Plain Android views, no background services, and no network use
   beyond your own Dispatcharr server. Made on and for the 2 GB onn 4K box.
 - **Favorites you arrange.** Hold OK on any app to add it, move it or open its App info.
-- **Home always comes back.** Pressing Home returns to your first favorite; Back from the Guide or
-  Library returns to Apps; the gear opens the TV's Settings.
+- **A guide like a cable box.** Channels down the side with their logos, two hours across, a line
+  at the current time. Filter by Favorites or by your Dispatcharr groups; hold OK on a channel to
+  make it a favorite; OK watches it in the video player you pick (VLC, Just Player and the like)
+  until Zapparr's own player arrives.
+- **Home always comes back.** Pressing Home returns to your first favorite; Back from the Guide,
+  the Library or the tabs returns to Apps; the gear beside the tabs opens the TV's Settings.
 - **A reversible debloat tool** for the onn 4K: switches off telemetry, ad services and preloads
   with `pm disable-user`, records every change first, and undoes it all with one command.
 
@@ -49,6 +57,9 @@ on Windows, `winget install Google.PlatformTools`) and Python 3 for the debloat 
    `python tools/debloat.py --host 192.168.1.50 restore` puts everything back.
 5. **Connect Dispatcharr.** Press Right to the Guide, choose *Connect to Dispatcharr*, and enter the
    server's address (like `192.168.1.20:9191`), a Dispatcharr user name and that user's XC password.
+6. **Connect your library.** On the Library, choose *Connect library server* and enter the Xtream
+   Codes server with your movies and series and its login. For vod-organizer that's port 8000 and
+   your IPTV provider's login, the same one TiviMate uses.
 
 Don't uninstall Zapparr while it is Home and the stock launcher is disabled: run `restore` first.
 
@@ -62,8 +73,9 @@ JDK 17 or newer and the Android SDK (Android Studio brings both).
 python -m unittest discover -s tools
 ```
 
-No Dispatcharr to test against? `python tools/fake_dispatcharr.py` serves 60 made-up channels and a
-guide around the current time. In the Android emulator, connect to `10.0.2.2` with user and password
+No Dispatcharr to test against? `python tools/fake_dispatcharr.py` serves 60 made-up channels with
+logos and a guide around the current time, and `python tools/fake_vod_organizer.py` a made-up
+library of movies and series on port 8000 (any login). In the Android emulator, connect to `10.0.2.2` with user and password
 `zapparr`.
 
 Every build, local or CI, is signed with the same public development key in [keystore/](keystore/README.md),
@@ -73,9 +85,11 @@ so a newer APK always installs over an older one.
 
 1. **Foundation** *(done)*: TV launcher with Home and Leanback intents, the three-deck skeleton,
    app discovery and the Favorites row, the onn debloat tool.
-2. **Dispatcharr and VOD**: the Xtream Codes API from Dispatcharr (channels, EPG, movies, series)
-   with M3U and XMLTV as a fallback; the time-grid guide; the VOD poster grid; a Continue Watching
-   row from the TV's Watch Next data; handing streams to an external player.
+2. **Dispatcharr and VOD** *(built)*: live TV from Dispatcharr's Xtream Codes API, movies and
+   series from your library server's (vod-organizer); the time-grid guide; the Library's poster
+   rows, details and resume; Continue Watching (with the TV's Watch Next data) and On now on the
+   Apps deck; handing streams to an external player. Not built: M3U and XMLTV as a fallback for
+   servers without the Xtream Codes API.
 3. **Built-in player**: Media3 (ExoPlayer), a mini-guide over live video, channel-number entry,
    last-channel recall, and live TV that keeps playing behind the guide.
 

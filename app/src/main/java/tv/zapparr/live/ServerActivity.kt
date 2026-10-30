@@ -1,6 +1,7 @@
 package tv.zapparr.live
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -13,10 +14,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import tv.zapparr.R
+import tv.zapparr.look.applyLook
+import tv.zapparr.look.themeColor
 
-/** Where the Dispatcharr address and XC login are entered. Saves them only once the server accepts them. */
+/**
+ * Where a server's address and login are entered: Dispatcharr's, or the library server's (see
+ * [ServerKind]). Saves them only once the server accepts them.
+ */
 class ServerActivity : ComponentActivity() {
 
+    private lateinit var kind: ServerKind
     private lateinit var store: ServerStore
     private lateinit var address: EditText
     private lateinit var username: EditText
@@ -26,10 +33,16 @@ class ServerActivity : ComponentActivity() {
     private var connecting = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        applyLook()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_server)
 
-        store = ServerStore(this)
+        kind = ServerKind.entries.firstOrNull { it.name == intent.getStringExtra(EXTRA_KIND) } ?: ServerKind.LIVE
+        store = ServerStore(this, kind)
+        findViewById<TextView>(R.id.server_heading).setText(kind.title)
+        findViewById<TextView>(R.id.server_help_text).setText(kind.help)
+        findViewById<TextView>(R.id.address_label).setText(kind.addressLabel)
+        findViewById<TextView>(R.id.password_label).setText(kind.passwordLabel)
         address = findViewById(R.id.address)
         username = findViewById(R.id.username)
         password = findViewById(R.id.password)
@@ -61,14 +74,14 @@ class ServerActivity : ComponentActivity() {
 
     private fun connect() {
         if (connecting) return
-        val base = Server.normalizeAddress(address.text.toString())
+        val base = Server.normalizeAddress(address.text.toString(), kind.defaultPort)
             ?: return showError(getString(R.string.server_bad_address), address)
         val server = Server(base, username.text.toString().trim(), password.text.toString())
         if (server.username.isEmpty()) return showError(getString(R.string.server_no_username), username)
 
         connecting = true
         connect.isEnabled = false
-        status.setTextColor(getColor(R.color.text_secondary))
+        status.setTextColor(themeColor(R.attr.zTextDim))
         status.text = getString(R.string.server_connecting, base)
         lifecycleScope.launch {
             val problem = withContext(Dispatchers.IO) {
@@ -96,6 +109,13 @@ class ServerActivity : ComponentActivity() {
         status.setTextColor(getColor(R.color.error))
         status.text = message
         focus.requestFocus()
+    }
+
+    companion object {
+        private const val EXTRA_KIND = "kind"
+
+        fun open(context: Context, kind: ServerKind) =
+            context.startActivity(Intent(context, ServerActivity::class.java).putExtra(EXTRA_KIND, kind.name))
     }
 }
 

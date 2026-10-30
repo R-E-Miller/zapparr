@@ -1,0 +1,44 @@
+# TCL sets with Android TV or Google TV (also sold as ffalcon, and as Semp TCL in Brazil).
+#
+# match: manufacturer=TCL*
+# match: brand=TCL*
+# match: brand=ffalcon
+#
+# `debloat.py plan` (with no list named) uses this list on top of the generic list for the platform.
+# One package per line; everything after # is a comment. Nothing is uninstalled:
+# `python tools/debloat.py restore` re-enables all of it.
+#
+# Sources, cited next to each group:
+#   [CYT n/80]  CleanYourTV's 80 tested TCL lists (examples/tcl-*, semp-tcl-*, ffalcon-*; MIT license,
+#               (c) 2026 Gathin), checked 2026-10-30: https://github.com/Gathin23/cleanyourtv
+#   [RCL]       rcland12/debloat-tv's packages-tcl.txt, tested on a TCL 75Q651G (Google TV, Android 12):
+#               https://github.com/rcland12/debloat-tv
+#
+# Never disabled here (debloat.py protects them): com.tcl.tv and com.tcl.tvinput (Live TV, the inputs,
+# and on some sets the remote's Power key), com.tvos, com.tcl.suspension (the Input picker),
+# com.tcl.dashboard, the remote's pairing and key services, com.tcl.providers.config and
+# com.tcl.initsetup (Wi-Fi drops without them), com.tcl.partnercustomizer (the remote's T key on some
+# sets), com.tcl.ttvs (source overlays), the TCL keyboard, all com.mediatek.* and com.realtek.*.
+# Left out because the sources disagree: com.tcl.guard (44 of 80 CYT lists disable it; RCL says never).
+#
+# Kept by default, but yours to decide. Remove the leading "# " to disable one:
+# com.tcl.smartalexa                   # Alexa [CYT 36/80; RCL]
+# com.tcl.versionUpdateApp             # TCL firmware updates
+
+# Telemetry [CYT 36/80, 33/80; RCL]
+com.tcl.bi                             # analytics and behaviour reporting
+com.tcl.logkit                         # log collection and upload
+
+# Store demo and promotions [CYT 68/80, 22/80, 52/80, 42/80, 18/80, 57/80, 24/80; RCL]
+com.tcl.esticker                       # store demo stickers
+com.tcl.exhibit                        # store demo mode
+com.tcl.waterfall.overseas             # promotion feed
+com.tcl.tv.tclhome_passive             # pushes TCL content onto the home screen at boot
+com.tcl.overseasappshow                # factory promotion and app-show service
+com.tcl.messagebox                     # TCL promotion notifications
+android.autoinstalls.config.tcl.device # first-boot auto-installs of partner apps
+
+# Manuals and the TCL account [CYT 32/80, 26/80, 48/80; RCL]
+com.tcl.ocean.instructions             # on-screen manual
+com.tcl.repairguide                    # repair guide
+com.tcl.usercenter                     # TCL account centre

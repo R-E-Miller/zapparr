@@ -1,0 +1,41 @@
+# Hisense sets with Android TV or Google TV (also Hisense-built sets sold under other names, such as
+# Motorola's, which report Hisense as their maker).
+#
+# match: manufacturer=Hisense*
+# match: brand=Hisense*
+#
+# `debloat.py plan` (with no list named) uses this list on top of the generic list for the platform.
+# One package per line; everything after # is a comment. Nothing is uninstalled:
+# `python tools/debloat.py restore` re-enables all of it.
+#
+# Source: CleanYourTV's tested Hisense lists (MIT license, (c) 2026 Gathin), checked 2026-10-30:
+#   [CYT n/3]   the three Google TV sets: hisense-u7-wutaishan, hisense-u75-hengshan,
+#               hisense-smarttv-4k-ffm-lushan
+#   [CYT n/11]  all eleven Android TV and Google TV ones
+#   https://github.com/Gathin23/cleanyourtv/tree/main/examples
+#
+# Never disabled here (debloat.py protects them): Live TV and the inputs (com.vt.tv.tvcenter,
+# com.vt.tv.input, com.vt.source.*), the TV services (com.vt.tvservice, com.vt.avmiddleware,
+# com.vt.tvplayer, com.vt.tv.commonui, com.vt.tv.smartservice), com.vt.tv.smartsense and
+# com.hisense.tv.smartsense (one set went to Android Recovery without them), com.vt.tv.aiot*,
+# com.vt.udpserver (casting and phone-remote discovery), all com.mediatek.*.
+#
+# probe and set-home show this on a Hisense set:
+# note: Hisense's own AirPlay stops working once set-home disables the setup wizard (it reads a setting from it). restore brings it back.
+#
+# Kept by default, but yours to decide. Remove the leading "# " to disable one:
+# com.vt.alexa                         # Hisense's Alexa; Google Assistant is separate [CYT 3/3]
+
+# Viewing-data tracking [CYT 3/3]
+com.vt.tv.evservice                    # ACR: recognises what's on screen
+
+# Promotions, store demo and the Hisense tab [CYT 2/3, 2/3, 3/3, 4/11, 3/3]
+com.vidaa.oemtabcontentprovider        # the Hisense tab on the Google TV home
+net.vidaatv.hisense.android.tv         # VIDAA Channels+ free channels, starts at boot
+com.vt.storemode                       # store demo
+com.hisense.storemode                  # store demo, older sets
+com.vt.hishow                          # "Family Moment" photo screensaver and content
+
+# Cleaner and first-setup leftovers [CYT 3/3, 3/3]
+com.vt.tv.protector                    # "DeviceAssistant" cache cleaner and turbo mode, starts at boot
+com.vt.fte                             # first-setup walkthrough; plan keeps it while it owns a saved Wi-Fi network

@@ -1,0 +1,51 @@
+# Sony BRAVIA sets with Android TV or Google TV.
+#
+# match: manufacturer=Sony
+# match: brand=Sony
+#
+# `debloat.py plan` (with no list named) uses this list on top of the generic list for the platform.
+# One package per line; everything after # is a comment. Nothing is uninstalled:
+# `python tools/debloat.py restore` re-enables all of it.
+#
+# Sources, cited next to each group:
+#   [CYT n/41]  CleanYourTV's 41 tested Sony lists (examples/sony-*; MIT license, (c) 2026 Gathin),
+#               checked 2026-10-30: https://github.com/Gathin23/cleanyourtv
+#   [UV]        udeshvirk/sony-bravia-launcher's debloat-list.txt, tested on a BRAVIA 4K VH2 (KD-55X80J):
+#               https://github.com/udeshvirk/sony-bravia-launcher/blob/master/debloat-list.txt
+#
+# Never disabled here (debloat.py protects them): com.sony.dtv.tvx and tvlin (Live TV and every HDMI
+# input), com.sony.dtv.tvinput.*, Bravia Sync (HDMI-CEC), remote pairing and keys, the Input menu
+# (smartui), Sony's system services and settings, all com.mediatek.* and com.realtek.*, and
+# com.sony.dtv.b2b.hotelmode: TV Settings opens blank without its provider (CYT sony-kd-55x8000c),
+# although other lists, [UV] among them, disable it.
+#
+# probe and set-home show this on a Sony set:
+# note: On a BRAVIA VU3 the remote's Settings button did nothing once the stock launcher was gone (CYT docs/TROUBLESHOOTING.md); Zapparr's gear opens TV Settings.
+
+# Viewing-data and usage telemetry [CYT 18/41, 34/41, 34/41, 28/41, 11/41, 24/41; UV]
+com.sonyericsson.idd.agent             # Sony IDD usage-data agent
+com.sony.dtv.da.service                # Sony device agent and remote support
+com.qterics.da.product                 # Qterics device agent
+tv.samba.ssm                           # Samba TV: recognises what's on screen for ad targeting
+tv.samba.ssm.ui                        # its opt-in screens
+com.sony.dtv.sonybugreportsys          # Sony bug report service
+
+# Promotions, the app store tile and partner auto-installs [CYT 23/41, 34/41, 13/41, 23/41, 18/41, 18/41; UV]
+com.sony.dtv.promos                    # My BRAVIA promotions
+com.sony.dtv.sonyselect                # Sony Select
+com.sony.dtv.sonytab                   # Sony row on the Google TV home
+android.autoinstalls.config.sony.bravia  # Play auto-installs of partner apps
+com.sony.dtv.discovery                 # Discover content bar
+com.sony.dtv.bivlinfo                  # the content list that feeds Discover
+
+# Shop demo mode [CYT 29/41, 19/41, 31/41, 14/41; UV]
+com.sony.dtv.demosupport
+com.sony.dtv.demosystemsupport
+com.sony.dtv.multiscreendemo
+com.sony.dtv.demomode
+
+# Help tiles and manuals [CYT 31/41, 28/41, 9/41, 17/41; UV]
+com.sony.dtv.smarthelp
+com.sony.dtv.customersupport
+com.sony.dtv.helpguidecontents
+com.sony.dtv.imanual

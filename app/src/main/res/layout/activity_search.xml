@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Search: the query, typed or spoken; the focused result in full; then rows of results. Nothing is
+     clipped on the way down: focused cards and posters scale up past their rows. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/safe_vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/safe_horizontal"
+        android:paddingEnd="@dimen/safe_horizontal">
+
+        <EditText
+            android:id="@+id/search_query"
+            style="@style/Zapparr.Field"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:drawableStart="@drawable/ic_search"
+            android:drawablePadding="12dp"
+            android:drawableTint="?attr/zTextFaint"
+            android:hint="@string/search_hint"
+            android:imeOptions="actionSearch"
+            android:importantForAutofill="no"
+            android:inputType="text" />
+
+        <ImageButton
+            android:id="@+id/search_voice"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="16dp"
+            android:background="@drawable/round_button"
+            android:contentDescription="@string/search_voice"
+            android:focusableInTouchMode="true"
+            android:scaleType="center"
+            android:src="@drawable/ic_mic"
+            android:tint="@color/icon_tint"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/search_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:paddingStart="@dimen/safe_horizontal"
+        android:paddingEnd="@dimen/safe_horizontal"
+        android:textColor="?attr/zTextDim"
+        android:textSize="@dimen/body_text" />
+
+    <!-- The focused result's name in full, and its details. -->
+    <TextView
+        android:id="@+id/search_focus_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:paddingStart="@dimen/safe_horizontal"
+        android:paddingEnd="@dimen/safe_horizontal"
+        android:singleLine="true"
+        android:textColor="?attr/zText"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/search_focus_meta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:paddingStart="@dimen/safe_horizontal"
+        android:paddingEnd="@dimen/safe_horizontal"
+        android:singleLine="true"
+        android:textColor="?attr/zTextDim"
+        android:textSize="@dimen/guide_detail_text" />
+
+    <androidx.leanback.widget.VerticalGridView
+        android:id="@+id/search_results"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/safe_horizontal"
+        android:paddingTop="@dimen/library_rows_top"
+        android:paddingEnd="@dimen/safe_horizontal"
+        android:paddingBottom="@dimen/safe_vertical"
+        android:verticalSpacing="@dimen/row_spacing"
+        app:focusOutFront="true" />
+</LinearLayout>

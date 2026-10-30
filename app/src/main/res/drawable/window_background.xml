@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The screen behind everything: the palette's background with a glow from the top-left corner
+     (Settings > Background: Solid drops it). The window paints it once; nothing above repaints it. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:angle="315"
+        android:centerColor="?attr/zBackground"
+        android:centerX="0.3"
+        android:endColor="?attr/zBackground"
+        android:startColor="?attr/zBackgroundGlow" />
+</shape>
