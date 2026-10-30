@@ -8,7 +8,7 @@ series sit side by side, with no ads and nothing deciding what you want to watch
 > debloat tool, the live TV guide and the Library work, and the Apps deck has Continue Watching
 > (what you left part-way, in the Library and in other apps) and On now (your recent channels with
 > what's airing). Search finds channels, programs, movies and series in one place. The gear opens
-> Zapparr's own settings: 22 color themes, a 12 or 24-hour clock, and how each screen looks.
+> Zapparr's own settings: 36 color themes, a 12 or 24-hour clock, and how each screen looks.
 > Streams go to your video player until Phase 3's built-in player.
 
 ## What it is
@@ -25,11 +25,13 @@ or press Up to the tabs at the top, as on Google TV, and pick one.
 - **Favorites you arrange.** Hold OK on any app to add it, move it or open its App info.
 - **A guide like a cable box.** Channels down the side with their logos, two hours across, a line
   at the current time. Filter by Favorites or by your Dispatcharr groups; hold OK on a channel to
-  make it a favorite; OK watches it in the video player you pick (VLC, Just Player and the like)
-  until Zapparr's own player arrives.
+  move, rename, hide or favorite it, as in TiviMate; OK watches it in the video player you pick (VLC,
+  Just Player and the like) until Zapparr's own player arrives.
 - **Home always comes back.** Pressing Home returns to your first favorite; Back from the Guide,
-  the Library or the tabs returns to Apps; the gear beside the tabs opens the TV's Settings.
-- **A reversible debloat tool** for the onn 4K: switches off telemetry, ad services and preloads
+  the Library or the tabs returns to Apps; the gear opens Zapparr's settings (themes, clock, rows,
+  the guide, backup and restore), with the TV's own Settings inside.
+- **A reversible debloat tool** for Android TV and Google TV boxes (onn, Chromecast, SHIELD, Mi Box
+  and others): picks the lists that fit the box, switches off telemetry, ad services and preloads
   with `pm disable-user`, records every change first, and undoes it all with one command.
 
 ## Try it
@@ -50,8 +52,8 @@ on Windows, `winget install Google.PlatformTools`) and Python 3 for the debloat 
 4. **Debloat and make it Home.** Follow [docs/debloat.md](docs/debloat.md). In short:
    ```sh
    python tools/debloat.py --host 192.168.1.50 probe
-   python tools/debloat.py --host 192.168.1.50 plan tools/lists/onn-4k-2023.txt
-   python tools/debloat.py --host 192.168.1.50 apply tools/lists/onn-4k-2023.txt
+   python tools/debloat.py --host 192.168.1.50 plan
+   python tools/debloat.py --host 192.168.1.50 apply
    python tools/debloat.py --host 192.168.1.50 set-home
    ```
    `python tools/debloat.py --host 192.168.1.50 restore` puts everything back.

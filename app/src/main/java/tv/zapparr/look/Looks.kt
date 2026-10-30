@@ -16,14 +16,29 @@ import java.util.Locale
 class Palette(val key: String, val name: String, @param:StyleRes val style: Int)
 
 /**
- * The color themes, in the order Settings shows them: Zapparr's own, cable-box looks, then
- * well-known editor themes, each from its published palette (sources in palettes.xml).
+ * The color themes, in the order Settings shows them: Zapparr's own; cable and satellite boxes,
+ * media apps and game consoles, in their interfaces' colors (no logos); retro terminals; then
+ * well-known editor themes from their published palettes. Sources are in palettes.xml.
  */
 object Palettes {
     val ALL = listOf(
         Palette(DEFAULT_PALETTE, "Zapparr", R.style.Palette_Zapparr),
         Palette("cable_blue", "Cable Blue", R.style.Palette_CableBlue),
         Palette("retro_guide", "Retro Guide", R.style.Palette_RetroGuide),
+        Palette("xfinity", "Xfinity", R.style.Palette_Xfinity),
+        Palette("comcast", "Comcast", R.style.Palette_Comcast),
+        Palette("directv", "DirecTV", R.style.Palette_DirecTV),
+        Palette("dish", "DISH", R.style.Palette_Dish),
+        Palette("tivimate", "TiviMate", R.style.Palette_TiviMate),
+        Palette("plex", "Plex", R.style.Palette_Plex),
+        Palette("emby", "Emby", R.style.Palette_Emby),
+        Palette("kodi", "Kodi", R.style.Palette_Kodi),
+        Palette("xbmc", "XBMC", R.style.Palette_Xbmc),
+        Palette("media_center", "Media Center", R.style.Palette_MediaCenter),
+        Palette("threadfin", "Threadfin", R.style.Palette_Threadfin),
+        Palette("xbox", "Xbox", R.style.Palette_Xbox),
+        Palette("playstation", "PlayStation", R.style.Palette_PlayStation),
+        Palette("nintendo", "Nintendo", R.style.Palette_Nintendo),
         Palette("phosphor", "Phosphor", R.style.Palette_Phosphor),
         Palette("amber", "Amber", R.style.Palette_Amber),
         Palette("crimson", "Crimson", R.style.Palette_Crimson),

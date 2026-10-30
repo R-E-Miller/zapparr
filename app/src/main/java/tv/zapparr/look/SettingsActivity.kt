@@ -2,6 +2,7 @@ package tv.zapparr.look
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
@@ -44,6 +45,12 @@ class SettingsActivity : ComponentActivity() {
             // Focusing a section shows its options, as the tabs on Home show their decks.
             item.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) show(index) }
             item.setOnClickListener { options.getChildAt(0)?.requestFocus() }
+            // Right goes into the options from the top, not to whichever is level with the section.
+            item.setOnKeyListener { _, keyCode, event ->
+                if (keyCode != KeyEvent.KEYCODE_DPAD_RIGHT) return@setOnKeyListener false
+                if (event.action == KeyEvent.ACTION_DOWN) options.getChildAt(0)?.requestFocus()
+                true
+            }
             sections.addView(item)
         }
         show(savedInstanceState?.getInt(SHOWN) ?: 0)
